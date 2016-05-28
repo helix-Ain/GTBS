@@ -50,8 +50,8 @@ Entity框架的全称是ADO.NET Entity Framework，是微软开发的基于ADO.N
 
 ###Aspose.Words for .NET
 
-```html
-			            public ActionResult GeneratingPaper(VolumeParameter vp)
+```C#
+		public ActionResult GeneratingPaper(VolumeParameter vp)
 			        {
 			            Document docx = new Document(Server.MapPath("~/medium/template/template.docx"));
 			            DocumentBuilder docxdb = new DocumentBuilder(docx);
