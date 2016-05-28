@@ -1,0 +1,17 @@
+﻿{
+    "sProcessing":   "加载中...",
+    "sLengthMenu":   "_MENU_ 公告/页",
+    "sZeroRecords":  "没有公告",
+    "sInfo":         "显示第 _START_ 至 _END_ 项公告，共 _TOTAL_ 项",
+    "sInfoEmpty":    "显示第 0 至 0 项公告，共 0 项",
+    "sInfoFiltered": "(由 _MAX_ 项记录过滤)",
+    "sInfoPostFix":  "",
+    "sSearch":       "",
+    "sUrl":          "",
+    "oPaginate": {
+        "sFirst":    "首页",
+        "sPrevious": "上页",
+        "sNext":     "下页",
+        "sLast":     "末页"
+    }
+}

@@ -1,0 +1,442 @@
+﻿@{
+    ViewBag.Title = "在线组卷";
+    Layout = "~/Views/Shared/_LayoutPage2.cshtml";
+}
+
+@section css{
+    <style type="text/css">
+        #retrieveBox {
+            position: absolute;
+            border: solid #d8d8d8 thin;
+            width: 19%;
+        }
+
+        #filterBox {
+            position: relative;
+            border: solid #d8d8d8 thin;
+            left: 2.5%;
+        }
+
+        #contentBox {
+            border: solid #d8d8d8 thin;
+            position: relative;
+            left: 2.5%;
+            margin-top: 15px;
+            height: auto;
+        }
+
+            #contentBox td button {
+                float: right;
+                margin-left: 15px;
+            }
+
+            #contentBox span {
+                color: #0f9d58;
+            }
+
+            #contentBox tbody tr td {
+                font-family: 'Microsoft PhagsPa';
+                font-size: small;
+                font-weight: 100;
+                line-height: 25px;
+            }
+
+        #panel {
+            height: 190px;
+            width: 200px;
+            position: fixed;
+            overflow: hidden;
+            top: 35%;
+            right: 0.5%;
+        }
+
+        #panel_hidden {
+            height: 190px;
+            width: 43px;
+            position: fixed;
+            top: 35%;
+            right: 0;
+        }
+
+        #contentTable tbody td {
+            border-bottom: solid #d8d8d8 thin;
+        }
+
+            #contentTable tbody td:hover {
+                background-color: rgba(191, 226, 222, 0.32);
+            }
+    </style>
+}
+@section headscript{
+    <script src="~/Content/js/menuTree3.js"></script>
+    <script src="~/Content/js/jquery.cookie.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#period_ul li a span').each(function () {
+                if ($(this).html() == $('#Period').val()) {
+                    $(this).addClass('label').addClass('label-info');
+                }
+            });
+            $('#subject_ul li a span').each(function () {
+                if ($(this).html() == $('#Subject').val()) {
+                    $(this).addClass('label').addClass('label-info');
+                }
+            });
+            switch ($('#Subject').val())
+            {
+                case '语文': $('#topic_yuwen').show(); $('#topic_yuwen li span').each(function () { if ($(this).html() == $('#Topic').val()) { $(this).addClass('label').addClass('label-info'); } }); break;
+                case '数学': $('#topic_shuxue').show(); $('#topic_shuxue li span').each(function () { if ($(this).html() == $('#Topic').val()) { $(this).addClass('label').addClass('label-info'); } }); break;
+                case '英语': $('#topic_yingyu').show(); $('#topic_yingyu li span').each(function () { if ($(this).html() == $('#Topic').val()) { $(this).addClass('label').addClass('label-info'); } }); break;
+                case '物理': $('#topic_wuli').show(); $('#topic_wuli li span').each(function () { if ($(this).html() == $('#Topic').val()) { $(this).addClass('label').addClass('label-info'); } }); break;
+                case '化学': $('#topic_huaxue').show(); $('#topic_huaxue li span').each(function () { if ($(this).html() == $('#Topic').val()) { $(this).addClass('label').addClass('label-info'); } }); break;
+                case '历史': $('#topic_lishi').show(); $('#topic_lishi li span').each(function () { if ($(this).html() == $('#Topic').val()) { $(this).addClass('label').addClass('label-info'); } }); break;
+                case '政治思品': $('#topic_zhengzhisipin').show(); $('#topic_zhengzhisipin li span').each(function () { if ($(this).html() == $('#Topic').val()) { $(this).addClass('label').addClass('label-info'); } }); break;
+                case '地理': $('#topic_dili').show(); $('#topic_dili li span').each(function () { if ($(this).html() == $('#Topic').val()) { $(this).addClass('label').addClass('label-info'); } }); break;
+                case '生物': $('#topic_shengwu').show(); $('#topic_shengwu li span').each(function () { if ($(this).html() == $('#Topic').val()) { $(this).addClass('label').addClass('label-info'); } }); break;
+
+            }
+          
+        });
+        function Refresh() {
+            window.location.href = '/BG/SetVolumeOnline?Grade=' + $('#Grade').val() + '&Grade_Son=' + $('#Grade_Son').val() + '&Grade_Grandson=' + $('#Grade_Grandson').val() + '&Period=' + $('#Period').val() + '&Subject=' + $('#Subject').val() + '&Topic=' + $('#Topic').val();
+        }
+        function LoadTest() {
+            $.ajax({
+                url: '/BG/LoadTest_SetVolume',
+                type: 'post',
+                dataType: 'json',
+                data: {
+                    Grade: $('#Grade').val(),
+                    Grade_Son: $('#Grade_Son').val(),
+                    Grade_Grandson: $('#Grade_Grandson').val(),
+                    Subject: $('#Subject').val(),
+                    Topic: $('#Topic').val()
+                },
+                success: function (data) {
+                    $.each(data, function () {
+                        $('#contentTable tbody').append('<tr><td><br/>' + this.Question_Title + "<br/><br/><button onclick=explain('" + this.Question_Id + "') type='button' class='btn btn-info'>查看解析</button><button type='button' class='btn btn-success' onclick=AddVolume(\"" + this.Question_Id + "\")>添加到组卷</button><br/></td></tr>");
+                    });
+                    $('#contentTable').dataTable({
+                        oLanguage: {
+                            sUrl: "/Content/DataTables-1.10.4/cn.txt"
+                        }
+                    });
+                }
+            });
+        }
+       
+        function AddVolume(Question_Id) {
+            $.ajax({
+                url: '/BG/AddVolume',
+                type: 'post',
+                dataType: 'html',
+                data: {
+                    Question_Id: Question_Id
+                },
+                success: function (data) {
+                    $('#testNum').html('&nbsp;&nbsp;&nbsp;共计(' + '<span style="color:red;">' + data + '</span>' + ')道题&nbsp;&nbsp;&nbsp;');
+                }
+            });
+        }
+    </script>
+}
+<input type="hidden" id="Grade" value="@ViewBag.Grade" />
+<input type="hidden" id="Grade_Son" value="@ViewBag.Grade_Son" />
+<input type="hidden" id="Grade_Grandson" value="@ViewBag.Grade_Grandson" />
+<input type="hidden" id="Subject" value="@ViewBag.Subject" />
+<input type="hidden" id="Topic" value="@ViewBag.Topic" />
+<input type="hidden" id="Period" value="@ViewBag.Period" />
+<div style="position: relative; left: 3.5%; margin-top: 1.5%;" class="col-md-7 col-md-offset-1">
+    <div id="retrieveBox" class="col-md-2" style="position: fixed;">
+        <div id="map" style="margin-top: 5px; margin-bottom: 5px;">位置:&nbsp;<span></span>&nbsp;<span></span>&nbsp;<span></span></div>
+        <ul id="tree" class="ztree"></ul>
+    </div>
+    <script type="text/javascript">
+        $('#map span').eq(0).html($('#Grade').val());
+        if ($('#Grade_Son').val() !='全部' ) {
+            $('#map span').eq(1).html($('#Grade_Son').val().substr(3, 2));
+        }
+        if ($('#Grade_Grandson').val() != '全部') {
+            $('#map span').eq(2).html($('#Grade_Grandson').val());
+        }
+    </script>
+    <div id="filterBox" class="col-md-12 col-md-offset-4">
+        <div id="periodBox">
+            <ul id="period_ul" class="nav nav-pills">
+                <li role="presentation">
+                    <label style="line-height: 40px;">
+                        学段:
+                    </label>
+                </li>
+                <li role="presentation"><a><span>小学试题</span></a></li>
+                <li role="presentation"><a><span>初中试题</span></a></li>
+                <li role="presentation"><a><span>高中试题</span></a></li>
+            </ul>
+        </div>
+        <div id="subjectBox">
+            <ul id="subject_ul" class="nav nav-pills">
+                <li role="presentation">
+                    <label style="line-height: 40px;">学科:</label>
+                </li>
+                <li role="presentation"><a><span>语文</span></a></li>
+                <li role="presentation"><a><span>数学</span></a></li>
+                <li role="presentation"><a><span>英语</span></a></li>
+                <li role="presentation" class="no-primary"><a><span>物理</span></a></li>
+                <li role="presentation" class="no-primary"><a><span>化学</span></a></li>
+                <li role="presentation" class="no-primary"><a><span>历史</span></a></li>
+                <li role="presentation" class="no-primary"><a><span>政治思品</span></a></li>
+                <li role="presentation" class="no-primary"><a><span>地理</span></a></li>
+                <li role="presentation" class="no-primary"><a><span>生物</span></a></li>
+            </ul>
+        </div>
+        <div id="topicBox">
+            <ul id="topic_yuwen" class="nav nav-pills topic">
+                <li role="presentation">
+                    <label style="line-height: 40px;">题型:</label>
+                </li>
+                <li role="presentation"><a><span>全部</span></a></li>
+                <li role="presentation"><a><span>单选题</span></a></li>
+                <li role="presentation"><a><span>写作题</span></a></li>
+                <li role="presentation"><a><span>现代文阅读</span></a></li>
+                <li role="presentation"><a><span>文言文阅读</span></a></li>
+                <li role="presentation"><a><span>诗歌鉴赏</span></a></li>
+                <li role="presentation"><a><span>语言表达</span></a></li>
+                <li role="presentation"><a><span>名著导读</span></a></li>
+                <li role="presentation"><a><span>默写</span></a></li>
+                <li role="presentation"><a><span>书写</span></a></li>
+                <li role="presentation"><a><span>其它题型</span></a></li>
+            </ul>
+            <ul id="topic_shuxue" class="nav nav-pills topic">
+                <li role="presentation">
+                    <label style="line-height: 40px;">题型:</label>
+                </li>
+                <li role="presentation"><a><span>全部</span></a></li>
+                <li role="presentation"><a><span>单选题</span></a></li>
+                <li role="presentation"><a><span>判断题</span></a></li>
+                <li role="presentation"><a><span>填空题</span></a></li>
+                <li role="presentation"><a><span>计算题</span></a></li>
+                <li role="presentation"><a><span>解答题</span></a></li>
+                <li role="presentation"><a><span>其它题型</span></a></li>
+            </ul>
+            <ul id="topic_yingyu" class="nav nav-pills topic">
+                <li role="presentation">
+                    <label style="line-height: 40px;">题型:</label>
+                </li>
+                <li role="presentation"><a><span>全部</span></a></li>
+                <li role="presentation"><a><span>单选题</span></a></li>
+                <li role="presentation"><a><span>填空题</span></a></li>
+                <li role="presentation"><a><span>完型填空</span></a></li>
+                <li role="presentation"><a><span>阅读理解</span></a></li>
+                <li role="presentation"><a><span>写作题</span></a></li>
+                <li role="presentation"><a><span>单词拼写</span></a></li>
+                <li role="presentation"><a><span>改错</span></a></li>
+                <li role="presentation"><a><span>信息分析题</span></a></li>
+                <li role="presentation"><a><span>句型转换</span></a></li>
+                <li role="presentation"><a><span>补充句子</span></a></li>
+                <li role="presentation"><a><span>翻译</span></a></li>
+                <li role="presentation"><a><span>其它题型</span></a></li>
+                <li role="presentation"><a><span>单词造句</span></a></li>
+                <li role="presentation"><a><span>选词填空</span></a></li>
+                <li role="presentation"><a><span>其它题型</span></a></li>
+            </ul>
+            <ul id="topic_wuli" class="nav nav-pills topic">
+                <li role="presentation">
+                    <label style="line-height: 40px;">题型:</label>
+                </li>
+                <li role="presentation"><a><span>全部</span></a></li>
+                <li role="presentation"><a><span>单选题</span></a></li>
+                <li role="presentation"><a><span>多选题</span></a></li>
+                <li role="presentation"><a><span>填空题</span></a></li>
+                <li role="presentation"><a><span>问答题</span></a></li>
+                <li role="presentation"><a><span>计算题</span></a></li>
+                <li role="presentation"><a><span>实验题</span></a></li>
+                <li role="presentation"><a><span>作图题</span></a></li>
+                <li role="presentation"><a><span>探究题</span></a></li>
+                <li role="presentation"><a><span>综合题</span></a></li>
+                <li role="presentation"><a><span>其它题型</span></a></li>
+            </ul>
+            <ul id="topic_huaxue" class="nav nav-pills topic">
+                <li role="presentation">
+                    <label style="line-height: 40px;">题型:</label>
+                </li>
+                <li role="presentation"><a><span>全部</span></a></li>
+                <li role="presentation"><a><span>单选题</span></a></li>
+                <li role="presentation"><a><span>填空题</span></a></li>
+                <li role="presentation"><a><span>问答题</span></a></li>
+                <li role="presentation"><a><span>计算题</span></a></li>
+                <li role="presentation"><a><span>实验题</span></a></li>
+                <li role="presentation"><a><span>推断题</span></a></li>
+                <li role="presentation"><a><span>探究题</span></a></li>
+                <li role="presentation"><a><span>信息分析题</span></a></li>
+                <li role="presentation"><a><span>其它题型</span></a></li>
+            </ul>
+            <ul id="topic_lishi" class="nav nav-pills topic">
+                <li role="presentation">
+                    <label style="line-height: 40px;">题型:</label>
+                </li>
+                <li role="presentation"><a><span>全部</span></a></li>
+                <li role="presentation"><a><span>单选题</span></a></li>
+                <li role="presentation"><a><span>判断题</span></a></li>
+                <li role="presentation"><a><span>填空题</span></a></li>
+                <li role="presentation"><a><span>问答题</span></a></li>
+                <li role="presentation"><a><span>探究题</span></a></li>
+                <li role="presentation"><a><span>综合题</span></a></li>
+                <li role="presentation"><a><span>其它题型</span></a></li>
+            </ul>
+            <ul id="topic_zhengzhisipin" class="nav nav-pills topic">
+                <li role="presentation">
+                    <label style="line-height: 40px;">题型:</label>
+                </li>
+                <li role="presentation"><a><span>全部</span></a></li>
+                <li role="presentation"><a><span>单选题</span></a></li>
+                <li role="presentation"><a><span>多选题</span></a></li>
+                <li role="presentation"><a><span>判断题</span></a></li>
+                <li role="presentation"><a><span>填空题</span></a></li>
+                <li role="presentation"><a><span>问答题</span></a></li>
+                <li role="presentation"><a><span>探究题</span></a></li>
+                <li role="presentation"><a><span>综合题</span></a></li>
+                <li role="presentation"><a><span>辨析题</span></a></li>
+                <li role="presentation"><a><span>其它题型</span></a></li>
+            </ul>
+            <ul id="topic_dili" class="nav nav-pills topic">
+                <li role="presentation">
+                    <label style="line-height: 40px;">题型:</label>
+                </li>
+                <li role="presentation"><a><span>全部</span></a></li>
+                <li role="presentation"><a><span>单选题</span></a></li>
+                <li role="presentation"><a><span>判断题</span></a></li>
+                <li role="presentation"><a><span>填空题</span></a></li>
+                <li role="presentation"><a><span>综合题</span></a></li>
+                <li role="presentation"><a><span>填表题</span></a></li>
+                <li role="presentation"><a><span>连线题</span></a></li>
+                <li role="presentation"><a><span>多选题</span></a></li>
+                <li role="presentation"><a><span>其它题型</span></a></li>
+            </ul>
+            <ul id="topic_shengwu" class="nav nav-pills topic">
+                <li role="presentation">
+                    <label style="line-height: 40px;">题型:</label>
+                </li>
+                <li role="presentation"><a><span>全部</span></a></li>
+                <li role="presentation"><a><span>单选题</span></a></li>
+                <li role="presentation"><a><span>多选题</span></a></li>
+                <li role="presentation"><a><span>判断题</span></a></li>
+                <li role="presentation"><a><span>填空题</span></a></li>
+                <li role="presentation"><a><span>综合题</span></a></li>
+                <li role="presentation"><a><span>探究题</span></a></li>
+                <li role="presentation"><a><span>连线题</span></a></li>
+                <li role="presentation"><a><span>其它题型</span></a></li>
+            </ul>
+        </div>
+    </div>
+    <div id="contentBox" class="col-md-12 col-md-offset-4">
+        <hr />
+        <table id="contentTable">
+            <thead>
+                <tr>
+                    <td></td>
+                </tr>
+            </thead>
+            <tbody></tbody>
+            <tfoot>
+                <tr>
+                    <td></td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+    <div style="height: 25px; width: 100%;"></div>
+</div>
+<div>
+    <div id="panel" class="panel panel-info">
+        <div class="panel-body">
+            <div style="border-right: solid #d8d8d8 thin; width: 30px; float: left;">
+                <span style="font-family: 'Microsoft YaHei'; font-size: medium; line-height: 35px;">
+                    试<br />
+                    题<br />
+                    篮<br />
+                    <span class="glyphicon glyphicon-shopping-cart"></span><br />
+                    <a class="testBasket" id="testBasket"><span id="ComeOut" class="glyphicon glyphicon-triangle-right"></span></a>
+                </span>
+            </div>
+            <div id="statistical" style="float: left; margin-left: 13%; margin-top: 5px;">
+                <div><span id="testNum"></span></div>
+                <div>
+                    <button id="GoIn" style="margin-top: 55px; margin-left: 10px;" class="btn btn-success">进入组卷</button>
+                </div>
+                <div>
+                    <button id="ClearTest" style="margin-top: 10px; margin-left: 10px;" class="btn btn-danger">全部清空</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="panel_hidden" class="panel panel-info" style="display: none">
+        <div class="panel-body">
+            <div>
+                <span style="font-family: 'Microsoft YaHei'; font-size: medium; line-height: 35px;">
+                    试<br />
+                    题<br />
+                    篮<br />
+                    <span class="glyphicon glyphicon-shopping-cart"></span><br />
+                    <a class="testBasket"><span class="glyphicon glyphicon-triangle-left"></span></a>
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section script{
+    <script type="text/javascript">
+        $('.topic').hide();
+        $('.testBasket').click(function () {
+            $('#panel').toggle();
+            $('#panel_hidden').toggle();
+        });
+        $(document).ready(function () {
+            $('#indentation').hide();
+            if ($('#Period').val() == '小学试题') {
+                $('.no-primary').hide();
+            }
+            AddVolume();
+            LoadTest();
+        });
+        $('#periodBox ul li a').click(function () {
+            $('#Period').val($(this).children().html());
+            switch ($('#Period').val()) {
+                case '小学试题': $('#Grade').val('一年级'); $('#Grade_Son').val(null); $('#Grade_Grandson').val(null); $('#Subject').val('语文'); $('#Topic').val('全部'); break;
+                case '初中试题': $('#Grade').val('七年级'); $('#Grade_Son').val(null); $('#Grade_Grandson').val(null); $('#Subject').val('语文');$('#Topic').val('全部');break;
+                case '高中试题': $('#Grade').val('十年级'); $('#Grade_Son').val(null); $('#Grade_Grandson').val(null); $('#Subject').val('语文');$('#Topic').val('全部');break;
+            }
+            Refresh();
+        });
+        $('#subjectBox ul li a').click(function () {
+            $('#Subject').val($(this).children().html());
+            $('Topic').val('全部');
+            Refresh();
+        });
+        $('#topicBox ul li a').click(function () {
+            $('#Topic').val($(this).children().html());
+            Refresh();
+        });
+        $('#ClearTest').click(function () {
+            if (confirm('确定要全部清空吗?')) {
+                $.ajax({
+                    url: '/BG/Clear',
+                    type: 'post',
+                    dataType: 'html',
+                    success: function (data) {
+                        if (data == 'success') {
+                            alert('操作成功!');
+                            AddVolume();
+                        }
+                        else {
+                            alert('操作失败!');
+                        }
+                    }
+                });
+            }
+        });
+        $('#GoIn').click(function () {
+            window.open('/GE/PaperDetails');
+        });
+    </script>
+}

@@ -1,0 +1,249 @@
+﻿@{
+    ViewBag.Title = "首页";
+    Layout = "~/Views/Shared/_LayoutPage1.cshtml";
+}
+
+@section css{
+    <style type="text/css">
+        .panel-darkGreen {
+            background-color: #0f9d58;
+            color: white;
+            border-color: #e4d4d4;
+        }
+
+        .panel-body {
+            background-color: white;
+            color: #808080;
+        }
+
+        .smallTopic {
+            color: #0f9d58;
+            margin-left: 3%;
+        }
+
+        .more, .more a {
+            float: right;
+            font-size:small;
+            color: white;
+        }
+
+            .more a:hover {
+                color: red;
+            }
+
+        .rightBox {
+            position: relative;
+            left: 3%;
+            border: solid #daf7e9 thin;
+        }
+
+        #PopularDownload, #LatestPaper {
+            position: relative;
+            top: -20px;
+        }
+
+            #PopularDownload * {
+                font-family: 'Microsoft Sans Serif';
+                font-size:small;
+                line-height: 30px;
+            }
+
+            #LatestPaper * {
+                font-family: 'Microsoft Sans Serif';
+                font-size:small;
+                line-height: 30px;
+            }
+    </style>
+}
+@section headscript{
+  
+    }
+<div style="margin-top: 1.5%;">
+    <div class="col-md-7 col-md-offset-1" style="position: relative; left: 3%;">
+        <div class="panel panel-darkGreen">
+            <div class="panel-heading">
+                <h3 class="panel-title">小学试题<span class="more"><a href="/EO/PrimaryTest">更多&gt;&gt;</a></span></h3>
+            </div>
+            <div class="panel-body">
+                <ul class="nav nav-pills">
+                    <li role="presentation"><a href="/EO/Navigation?Title=小学试题&Subject=语文">语文</a></li>
+                    <li role="presentation"><a href="/EO/Navigation?Title=小学试题&Subject=数学">数学</a></li>
+                    <li role="presentation"><a href="/EO/Navigation?Title=小学试题&Subject=英语">英语</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="panel panel-darkGreen">
+            <div class="panel-heading">
+                <h3 class="panel-title">初中试题<span class="more"><a href="/EO/JuniorTest">更多&gt;&gt;</a></span></h3>
+            </div>
+            <div class="panel-body">
+                <ul class="nav nav-pills">
+                    <li role="presentation"><a href="/EO/Navigation?Title=初中试题&Subject=语文">语文</a></li>
+                    <li role="presentation"><a href="/EO/Navigation?Title=初中试题&Subject=数学">数学</a></li>
+                    <li role="presentation"><a href="/EO/Navigation?Title=初中试题&Subject=英语">英语</a></li>
+                    <li role="presentation"><a href="/EO/Navigation?Title=初中试题&Subject=物理">物理</a></li>
+                    <li role="presentation"><a href="/EO/Navigation?Title=初中试题&Subject=化学">化学</a></li>
+                    <li role="presentation"><a href="/EO/Navigation?Title=初中试题&Subject=历史">历史</a></li>
+                    <li role="presentation"><a href="/EO/Navigation?Title=初中试题&Subject=政治思品">政治思品</a></li>
+                    <li role="presentation"><a href="/EO/Navigation?Title=初中试题&Subject=地理">地理</a></li>
+                    <li role="presentation"><a href="/EO/Navigation?Title=初中试题&Subject=生物">生物</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="panel panel-darkGreen">
+            <div class="panel-heading">
+                <h3 class="panel-title">高中试题<span class="more"><a href="/EO/HighTest">更多&gt;&gt;</a></span></h3>
+            </div>
+            <div class="panel-body">
+                <ul class="nav nav-pills">
+                    <li role="presentation"><a href="/EO/Navigation?Title=高中试题&Subject=语文">语文</a></li>
+                    <li role="presentation"><a href="/EO/Navigation?Title=高中试题&Subject=数学">数学</a></li>
+                    <li role="presentation"><a href="/EO/Navigation?Title=高中试题&Subject=英语">英语</a></li>
+                    <li role="presentation"><a href="/EO/Navigation?Title=高中试题&Subject=物理">物理</a></li>
+                    <li role="presentation"><a href="/EO/Navigation?Title=高中试题&Subject=化学">化学</a></li>
+                    <li role="presentation"><a href="/EO/Navigation?Title=高中试题&Subject=历史">历史</a></li>
+                    <li role="presentation"><a href="/EO/Navigation?Title=高中试题&Subject=政治思品">政治思品</a></li>
+                    <li role="presentation"><a href="/EO/Navigation?Title=高中试题&Subject=地理">地理</a></li>
+                    <li role="presentation"><a href="/EO/Navigation?Title=高中试题&Subject=生物">生物</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="panel panel-darkGreen">
+            <div class="panel-heading">
+                <h3 class="panel-title">小学试卷<span class="more"><a href="/EO/PrimaryExamPaper">更多&gt;&gt;</a></span></h3>
+            </div>
+            <div class="panel-body">
+                <ul class="nav nav-pills">
+                    <li role="presentation"><a href="/EO/Navigation?Title=小学试卷&Subject=语文&Grade=全部">语文</a></li>
+                    <li role="presentation"><a href="/EO/Navigation?Title=小学试卷&Subject=数学&Grade=全部">数学</a></li>
+                    <li role="presentation"><a href="/EO/Navigation?Title=小学试卷&Subject=英语&Grade=全部">英语</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="panel panel-darkGreen">
+            <div class="panel-heading">
+                <h3 class="panel-title">初中试卷<span class="more"><a href="/EO/JuniorExamPaper">更多&gt;&gt;</a></span></h3>
+            </div>
+            <div class="panel-body">
+                <h5 class="smallTopic"><b>初一试卷</b></h5>
+                <ul class="nav nav-pills">
+                    <li role="presentation"><a href="/EO/Navigation?Title=初中试卷&Subject=语文&Grade=七年级">语文</a></li>
+                    <li role="presentation"><a href="/EO/Navigation?Title=初中试卷&Subject=数学&Grade=七年级">数学</a></li>
+                    <li role="presentation"><a href="/EO/Navigation?Title=初中试卷&Subject=英语&Grade=七年级">英语</a></li>
+                    <li role="presentation"><a href="/EO/Navigation?Title=初中试卷&Subject=物理&Grade=七年级">物理</a></li>
+                    <li role="presentation"><a href="/EO/Navigation?Title=初中试卷&Subject=化学&Grade=七年级">化学</a></li>
+                    <li role="presentation"><a href="/EO/Navigation?Title=初中试卷&Subject=历史&Grade=七年级">历史</a></li>
+                    <li role="presentation"><a href="/EO/Navigation?Title=初中试卷&Subject=政治思品&Grade=七年级">政治思品</a></li>
+                    <li role="presentation"><a href="/EO/Navigation?Title=初中试卷&Subject=地理&Grade=七年级">地理</a></li>
+                    <li role="presentation"><a href="/EO/Navigation?Title=初中试卷&Subject=生物&Grade=七年级">生物</a></li>
+                </ul>
+                <h5 class="smallTopic"><b>初二试卷</b></h5>
+                <ul class="nav nav-pills">
+                    <li role="presentation"><a href="/EO/Navigation?Title=初中试卷&Subject=语文&Grade=八年级">语文</a></li>
+                    <li role="presentation"><a href="/EO/Navigation?Title=初中试卷&Subject=数学&Grade=八年级">数学</a></li>
+                    <li role="presentation"><a href="/EO/Navigation?Title=初中试卷&Subject=英语&Grade=八年级">英语</a></li>
+                    <li role="presentation"><a href="/EO/Navigation?Title=初中试卷&Subject=物理&Grade=八年级">物理</a></li>
+                    <li role="presentation"><a href="/EO/Navigation?Title=初中试卷&Subject=化学&Grade=八年级">化学</a></li>
+                    <li role="presentation"><a href="/EO/Navigation?Title=初中试卷&Subject=历史&Grade=八年级">历史</a></li>
+                    <li role="presentation"><a href="/EO/Navigation?Title=初中试卷&Subject=政治思品&Grade=八年级">政治思品</a></li>
+                    <li role="presentation"><a href="/EO/Navigation?Title=初中试卷&Subject=地理&Grade=八年级">地理</a></li>
+                    <li role="presentation"><a href="/EO/Navigation?Title=初中试卷&Subject=生物&Grade=八年级">生物</a></li>
+                </ul>
+                <h5 class="smallTopic"><b>初三试卷</b></h5>
+                <ul class="nav nav-pills">
+                    <li role="presentation"><a href="/EO/Navigation?Title=初中试卷&Subject=语文&Grade=九年级">语文</a></li>
+                    <li role="presentation"><a href="/EO/Navigation?Title=初中试卷&Subject=数学&Grade=九年级">数学</a></li>
+                    <li role="presentation"><a href="/EO/Navigation?Title=初中试卷&Subject=英语&Grade=九年级">英语</a></li>
+                    <li role="presentation"><a href="/EO/Navigation?Title=初中试卷&Subject=物理&Grade=九年级">物理</a></li>
+                    <li role="presentation"><a href="/EO/Navigation?Title=初中试卷&Subject=化学&Grade=九年级">化学</a></li>
+                    <li role="presentation"><a href="/EO/Navigation?Title=初中试卷&Subject=历史&Grade=九年级">历史</a></li>
+                    <li role="presentation"><a href="/EO/Navigation?Title=初中试卷&Subject=政治思品&Grade=九年级">政治思品</a></li>
+                    <li role="presentation"><a href="/EO/Navigation?Title=初中试卷&Subject=地理&Grade=九年级">地理</a></li>
+                    <li role="presentation"><a href="/EO/Navigation?Title=初中试卷&Subject=生物&Grade=九年级">生物</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="panel panel-darkGreen">
+            <div class="panel-heading">
+                <h3 class="panel-title">高中试卷<span class="more"><a href="/EO/HighExamPaper">更多&gt;&gt;</a></span></h3>
+            </div>
+            <div class="panel-body">
+                <h5 class="smallTopic"><b>高一试卷</b></h5>
+                <ul class="nav nav-pills">
+                    <li role="presentation"><a href="/EO/Navigation?Title=高中试卷&Subject=语文&Grade=十年级">语文</a></li>
+                    <li role="presentation"><a href="/EO/Navigation?Title=高中试卷&Subject=数学&Grade=十年级">数学</a></li>
+                    <li role="presentation"><a href="/EO/Navigation?Title=高中试卷&Subject=英语&Grade=十年级">英语</a></li>
+                    <li role="presentation"><a href="/EO/Navigation?Title=高中试卷&Subject=物理&Grade=十年级">物理</a></li>
+                    <li role="presentation"><a href="/EO/Navigation?Title=高中试卷&Subject=化学&Grade=十年级">化学</a></li>
+                    <li role="presentation"><a href="/EO/Navigation?Title=高中试卷&Subject=历史&Grade=十年级">历史</a></li>
+                    <li role="presentation"><a href="/EO/Navigation?Title=高中试卷&Subject=政治思品&Grade=十年级">政治思品</a></li>
+                    <li role="presentation"><a href="/EO/Navigation?Title=高中试卷&Subject=地理&Grade=十年级">地理</a></li>
+                    <li role="presentation"><a href="/EO/Navigation?Title=高中试卷&Subject=生物&Grade=十年级">生物</a></li>
+                </ul>
+                <h5 class="smallTopic"><b>高二试卷</b></h5>
+                <ul class="nav nav-pills">
+                    <li role="presentation"><a href="/EO/Navigation?Title=高中试卷&Subject=语文&Grade=十一年级">语文</a></li>
+                    <li role="presentation"><a href="/EO/Navigation?Title=高中试卷&Subject=数学&Grade=十一年级">数学</a></li>
+                    <li role="presentation"><a href="/EO/Navigation?Title=高中试卷&Subject=英语&Grade=十一年级">英语</a></li>
+                    <li role="presentation"><a href="/EO/Navigation?Title=高中试卷&Subject=物理&Grade=十一年级">物理</a></li>
+                    <li role="presentation"><a href="/EO/Navigation?Title=高中试卷&Subject=化学&Grade=十一年级">化学</a></li>
+                    <li role="presentation"><a href="/EO/Navigation?Title=高中试卷&Subject=历史&Grade=十一年级">历史</a></li>
+                    <li role="presentation"><a href="/EO/Navigation?Title=高中试卷&Subject=政治思品&Grade=十一年级">政治思品</a></li>
+                    <li role="presentation"><a href="/EO/Navigation?Title=高中试卷&Subject=地理&Grade=十一年级">地理</a></li>
+                    <li role="presentation"><a href="/EO/Navigation?Title=高中试卷&Subject=生物&Grade=十一年级">生物</a></li>
+                </ul>
+                <h5 class="smallTopic"><b>高三试卷</b></h5>
+                <ul class="nav nav-pills">
+                    <li role="presentation"><a href="/EO/Navigation?Title=高中试卷&Subject=语文&Grade=十二年级">语文</a></li>
+                    <li role="presentation"><a href="/EO/Navigation?Title=高中试卷&Subject=数学&Grade=十二年级">数学</a></li>
+                    <li role="presentation"><a href="/EO/Navigation?Title=高中试卷&Subject=英语&Grade=十二年级">英语</a></li>
+                    <li role="presentation"><a href="/EO/Navigation?Title=高中试卷&Subject=物理&Grade=十二年级">物理</a></li>
+                    <li role="presentation"><a href="/EO/Navigation?Title=高中试卷&Subject=化学&Grade=十二年级">化学</a></li>
+                    <li role="presentation"><a href="/EO/Navigation?Title=高中试卷&Subject=历史&Grade=十二年级">历史</a></li>
+                    <li role="presentation"><a href="/EO/Navigation?Title=高中试卷&Subject=政治思品&Grade=十二年级">政治思品</a></li>
+                    <li role="presentation"><a href="/EO/Navigation?Title=高中试卷&Subject=地理&Grade=十二年级">地理</a></li>
+                    <li role="presentation"><a href="/EO/Navigation?Title=高中试卷&Subject=生物&Grade=十二年级">生物</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-2 rightBox">
+        <div>
+            <h5><b>热门下载</b></h5>
+            <hr />
+            <ul id="PopularDownload"></ul>
+        </div>
+        <div>
+            <h5><b>最新试卷</b></h5>
+            <hr />
+            <ul id="LatestPaper"></ul>
+        </div>
+    </div>
+</div>
+@section script{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $.ajax({
+                url: '/GE/PopularDownload',
+                type: 'post',
+                dataType: 'json',
+                success: function (data) {
+                    $.each(data, function () {
+                        $('#PopularDownload').append("<li><a onclick='Preview(\"" + this.Paper_Id + "\")' title='" + this.Paper_Name + "'>" + '<img src="/Content/img/word.gif" alt="" />&nbsp;' + checkNull(this.Paper_Name) + '..</a><a onclick="AddDownloadNum(\''+this.Paper_Id+'\')" href=' + this.Paper_Path + ' style="float:right;">下载</a></li>');
+                    });
+                }
+            });
+            $.ajax({
+                url: '/GE/LatestPaper',
+                type: 'post',
+                dataType: 'json',
+                success: function (data)
+                {
+                    $.each(data, function () {
+                        $('#LatestPaper').append("<li><a onclick='Preview(\""+this.Paper_Id+"\")' title='"+this.Paper_Name+"'>"+'<img src="/Content/img/word.gif" alt="" />&nbsp;'+checkNull(this.Paper_Name)+'..</a><a onclick="AddDownloadNum(\''+this.Paper_Id+'\')" href='+this.Paper_Path+' style="float:right;">下载</a></li>');
+                    });
+                }
+            });
+        });
+    </script>
+}

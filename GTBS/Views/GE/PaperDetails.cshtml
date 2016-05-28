@@ -1,0 +1,358 @@
+﻿@{
+    ViewBag.Title = "试卷详情 ";
+    Layout = "~/Views/Shared/_LayoutPage2.cshtml";
+}
+@section css{
+    <style type="text/css">
+        #content {
+            border: solid #d8d8d8 thin;
+        }
+
+            #content * {
+                font-family: 'Microsoft PhagsPa';
+                font-size: small;
+            }
+
+            #content tbody td {
+                border-bottom: solid #d8d8d8 thin;
+                line-height: 35px;
+            }
+
+        span.serial {
+            font-size: larger;
+        }
+
+        .questionBox {
+            margin-bottom: 25px;
+        }
+
+            .questionBox button {
+                margin-left: 10px;
+                float: right;
+            }
+
+        #title {
+            border: solid #d8d8d8 thin;
+            font-family: 'Microsoft YaHei';
+            margin-bottom: 15px;
+            text-align: center;
+            background-color: #f2f2f2;
+        }
+
+        .topicInfo {
+            background-color: #efefef;
+            color: #399cde;
+            font-weight: 700;
+        }
+
+        #Menu {
+            width: 21%;
+            position: fixed;
+        }
+
+        #SetUp, #Operation {
+            width: 100%;
+        }
+
+        td:hover {
+            background-color: #ebf6f3;
+        }
+
+        select {
+            width: 157px;
+        }
+    </style>
+}
+@section headscript{
+    <script type="text/javascript">
+        function RemoveTestCookie(Question_Id) {
+            $.ajax({
+                url: '/GE/RemoveTestCookie',
+                type: 'post',
+                dataType: 'html',
+                data: {
+                    Question_Id: Question_Id
+                },
+                success: function (data) {
+                    if (data == 'success') {
+                        $('#content table tbody').empty();
+                        LoadTestByCookie();
+                    }
+                    else {
+                        alert('操作失败!');
+                    }
+                }
+            });
+        }
+        $(document).ready(function () {
+            LoadTestByCookie();
+        });
+        function LoadTestByCookie() {
+            $.ajax({
+                url: '/GE/LoadTestByCookie',
+                type: 'post',
+                dataType: 'json',
+                success: function (data) {
+                    $.each(data, function (index) {
+                        $('#content table tbody').append('<tr id=' + this.Question_Id + '><td><div class="questionBox">' + '<span class="serial">' + '<div class="topicInfo">' + this.Question_Topic + '</div>' + (index + 1) + '、' + '</span>' + this.Question_Title.replace('<p>', '').replace('</p>', '') + '<br/br/><button onclick="RemoveTestCookie(\'' + this.Question_Id + '\')" class="btn btn-danger">×&nbsp;删除</button><button  onclick="TestDetailed(\'' + this.Question_Id + '\')" class="btn btn-success">详情</button><br/></div></td></tr>');
+                    });
+                }
+            });
+        }
+    </script>
+}
+<input id="Paper_Id" type="hidden" />
+<button id="modal_button" style="display:none" type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">
+    Launch demo modal
+</button>
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h5 class="modal-title" id="myModalLabel">Modal title</h5>
+            </div>
+            <div class="modal-body">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div style="position: relative; left: 3.5%; margin-top: 15px;" class="col-md-10 col-md-offset-1">
+    <div class="row">
+        <div id="Menu">
+            <div id="Operation" class="col-md-3">
+                <div class="panel panel-default">
+                    <div class="panel-heading">组卷操作<a id="OperationShrinkage"><span style="float:right" class="glyphicon glyphicon-minus"></span></a></div>
+                    <div id="OperationShrinkageBody" class="panel-body" style="text-align:center;">
+                        <button id="Generate" class="btn btn-info btn-sm" style="margin-bottom:5px;width:167.5px;"><span class="glyphicon glyphicon-cloud-upload"></span>&nbsp;生成试卷</button><br />
+                        <button id="Continue" class="btn btn-info btn-sm" style="margin-bottom:5px;"><span class="glyphicon glyphicon-plus">继续选题</span></button>
+                        <button id="Preview" class="btn btn-info btn-sm disabled" style="margin-bottom:5px;"><span class="glyphicon glyphicon-eye-open">在线预览</span></button><br />
+                        <button id="Release" class="btn btn-info btn-sm disabled"><span class="glyphicon glyphicon-ok-sign"></span>发布试卷</button>
+                        <button id="Download" class="btn btn-info btn-sm disabled"><span class="glyphicon glyphicon-download-alt"></span>下载试卷</button>
+                    </div>
+                </div>
+            </div>
+            <div id="SetUp" class="col-md-3">
+                <div class="panel panel-default">
+                    <div class="panel-heading">组卷设置<a id="SettingShrinkage"><span style="float:right;" class="glyphicon glyphicon-minus"></span></a></div>
+                    <div id="SettingShrinkageBody" class="panel-body">
+                        <div>
+                            <span class="label label-info" style="font-size:small;">卷名&nbsp;:</span>
+                            <input id="Paper_Name" type="text" />
+                        </div>
+                        <div style="margin-top:7px;">
+                            <span class="label label-info" style="font-size:small;">作者&nbsp;:</span>
+                            <input id="Paper_Author" type="text" />
+                        </div>
+                        <div style="margin-top:7px;">
+                            <span class="label label-info" style="font-size:small;">年级&nbsp;:</span>
+                            <select id="Paper_Grade">
+                                <option value="一年级">一年级</option>
+                                <option value="二年级">二年级</option>
+                                <option value="三年级">三年级</option>
+                                <option value="四年级">四年级</option>
+                                <option value="五年级">五年级</option>
+                                <option value="六年级">六年级</option>
+                                <option selected value="七年级">七年级</option>
+                                <option value="八年级">八年级</option>
+                                <option value="九年级">九年级</option>
+                                <option value="十年级">十年级</option>
+                                <option value="十一年级">十一年级</option>
+                                <option value="十二年级">十二年级</option>
+                            </select>
+                        </div>
+                        <div style="margin-top:7px;">
+                            <span class="label label-info" style="font-size:small">学科&nbsp;:</span>
+                            <select id="Paper-Subject">
+                                <option selected value="语文">语文</option>
+                                <option value="数学">数学</option>
+                                <option value="英语">英语</option>
+                                <option value="物理">物理</option>
+                                <option value="化学">化学</option>
+                                <option value="历史">历史</option>
+                                <option value="政治思品">政治思品</option>
+                                <option value="地理">地理</option>
+                                <option value="生物">生物</option>
+                            </select>
+                        </div>
+                        <div style="margin-top:7px;">
+                            <span class="label label-info" style="font-size:small">类型&nbsp;:</span>
+                            <select id="Paper_Kind">
+                                <option value="同步试卷">同步试卷</option>
+                                <option value="单元试卷" selected>单元试卷</option>
+                                <option value="专题试卷">专题试卷</option>
+                                <option value="月考试卷">月考试卷</option>
+                                <option value="期中试卷">期中试卷</option>
+                                <option value="期末试卷">期末试卷</option>
+                                <option value="升中试卷">升中试卷</option>
+                                <option value="中考试卷">中考试卷</option>
+                                <option value="高考试卷">高考试卷</option>
+                                <option value="竞赛试卷">竞赛试卷</option>
+                            </select>
+                        </div>
+                        <div style="margin-top:7px;">
+                            <span class="label label-info" style="font-size:small;">省份&nbsp;:</span>
+                            <select id="Paper_Province">
+                                <option value="北京">北京</option>
+                                <option value="上海">上海</option>
+                                <option value="天津">天津</option>
+                                <option value="重庆">重庆</option>
+                                <option value="江苏">江苏</option>
+                                <option value="广东" selected>广东</option>
+                                <option value="浙江">浙江</option>
+                                <option value="山东">山东</option>
+                                <option value="湖北">湖北</option>
+                                <option value="吉林">吉林</option>
+                                <option value="河北">河北</option>
+                                <option value="福建">福建</option>
+                                <option value="安微">安徽</option>
+                                <option value="四川">四川</option>
+                                <option value="湖南">湖南</option>
+                                <option value="江西">江西</option>
+                                <option value="辽宁">辽宁</option>
+                                <option value="黑龙江">黑龙江</option>
+                                <option value="山西">山西</option>
+                                <option value="河南">河南</option>
+                                <option value="陕西">陕西</option>
+                                <option value="云南">云南</option>
+                                <option value="甘肃">甘肃</option>
+                                <option value="贵州">贵州</option>
+                                <option value="广西">广西</option>
+                                <option value="海南">海南</option>
+                                <option value="青海">青海</option>
+                                <option value="内蒙古">内蒙古</option>
+                                <option value="西藏">西藏</option>
+                                <option value="宁夏">宁夏</option>
+                                <option value="新疆">新疆</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="title" class="col-md-8 col-md-offset-3"><span style="font-size:larger;font-family:'Microsoft YaHei';">试卷详情</span></div>
+        <div id="content" class="col-md-8 col-md-offset-3">
+            <table style="width:100%;">
+                <thead>
+                    <tr>
+                        <td></td>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+                <tfoot>
+                    <tr>
+                        <td></td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+</div>
+@section script{
+    <script type="text/javascript">
+        var OperationShrinkage = true;                            //true展开
+        $('#OperationShrinkage').click(function () {
+            if (OperationShrinkage == true) {
+                $('#OperationShrinkageBody').hide();
+                $(this).children().removeClass('glyphicon-minus').addClass('glyphicon-plus');
+                OperationShrinkage = false;
+            }
+            else {
+                $('#OperationShrinkageBody').show();
+                $(this).children().removeClass('glyphicon-plus').addClass('glyphicon-minus');
+                OperationShrinkage = true;
+            }
+        });
+        var SettingShrinkage = true;
+        $('#SettingShrinkage').click(function () {
+            if (SettingShrinkage == true) {
+                $('#SettingShrinkageBody').hide();
+                $(this).children().removeClass('glyphicon-minus').addClass('glyphicon-plus');
+                SettingShrinkage = false;
+            }
+            else {
+                $('#SettingShrinkageBody').show();
+                $(this).children().removeClass('glyphicon-plus').addClass('glyphicon-minus');
+                SettingShrinkage = true
+            }
+        });
+        function IsNullReplace(i) {
+            if (i != null) {
+                return i.replace('<p>', '').replace('</p>', '');
+            }
+            else {
+                return '';
+            }
+        }
+        function TestDetailed(Question_Id) {
+            $.ajax({
+                url: '/GE/TestDetailed',
+                type: 'post',
+                dataType: 'json',
+                data: { Question_Id: Question_Id },
+                success: function (data) {
+                    $('.modal-body').empty();
+                    $('.modal-title').html('试题详情');
+                    $('.modal-body').append('<span style="color:#60950d;">答案&nbsp;:&nbsp;</span>' + '<span>' + IsNullReplace(data.Question_Answer) + '</span><br/><br/>');
+                    $('.modal-body').append('<span style="color:#60950d;">解析&nbsp;:&nbsp;</span>' + '<span>' + IsNullReplace(data.Question_Explain) + '</span><br/><br/>');
+                    $('.modal-body').append('<span>题目属性&nbsp;:&nbsp;</span>' + '<span>题型&nbsp;:&nbsp;' + data.Question_Topic + '&nbsp;|&nbsp;' + '点击量&nbsp:&nbsp;' + data.Question_Click + '</span>');
+                    $('#modal_button').trigger('click');
+                }
+            });
+        }
+        var Question_Id = [];
+        $('#Generate').click(function () {
+            if ($('#Paper_Name').val() == '') {
+                alert('卷名不能为空!');
+            }
+            else {
+                $('#content table tbody tr').each(function () {
+                    Question_Id.push($(this).attr('id'));
+                });
+                $.ajax({
+                    url: '/GE/GeneratingPaper',
+                    type: 'post',
+                    dataType: 'html',
+                    data: {
+                        Question_Id: Question_Id,
+                        Paper_Name: $('#Paper_Name').val(),
+                        Paper_Author: $('#Paper_Author').val(),
+                        Paper_Grade: $('#Paper_Grade').val(),
+                        Paper_Subject: $('#Paper_Subject').val(),
+                        Paper_Kind: $('#Paper_Kind').val(),
+                        Paper_Province: $('#Paper_Province').val()
+                    },
+                    success: function (data) {
+                        $('#Paper_Id').val(data);
+                        $('#Generate,#Continue').addClass('disabled');
+                        $('#Preview,#Release,#Download').removeClass('disabled');
+                        alert('成功生成试卷!');
+                    }
+                });
+            }
+        });
+        $('#Continue').click(function () {
+            window.location.href = '/BG/SetVolumeOnline';
+        });
+        $('#Preview').click(function () {
+            Preview($('#Paper_Id').val());
+        });
+        $('#Release').click(function () {
+            alert('发布成功!');
+        });
+        $('#Download').click(function () {
+            $.ajax({
+                url: '/GE/DownloadPaper',
+                type: 'post',
+                dataType: 'html',
+                data: { Paper_Id: $('#Paper_Id').val() },
+                success: function (data) {
+                    window.open(data);
+                }
+            });
+        });
+    </script>
+}

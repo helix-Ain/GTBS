@@ -1,0 +1,133 @@
+﻿@{
+    Layout = "~/Views/Shared/_LayoutPage1.cshtml";
+}
+@section css{
+    <style type="text/css">
+        #infoBox {
+            position: absolute;
+            border: solid #d8d8d8 thin;
+        }
+
+        #explainBox {
+            position: relative;
+            border: solid #d8d8d8 thin;
+            left: 2.5%;
+        }
+
+            #explainBox ul li {
+                font-family: 'Microsoft PhagsPa';
+                font-size: small;
+                font-weight: 100;
+                line-height: 25px;
+                border-bottom: solid #d8d8d8 thin;
+            }
+
+                #explainBox ul li span {
+                    font-family: 'Microsoft PhagsPa';
+                    font-size: small;
+                    font-weight: 100;
+                    line-height: 25px;
+                }
+
+                #explainBox ul li span {
+                    font-family: 'Microsoft PhagsPa';
+                }
+
+            #explainBox ul span.fenge {
+                color: #0f9d58;
+            }
+
+        #PopularDownload, #LatestPaper {
+            position: relative;
+            top: -20px;
+        }
+
+            #PopularDownload * {
+                font-family: 'Microsoft Sans Serif';
+                font-size: small;
+                line-height: 30px;
+            }
+
+            #LatestPaper * {
+                font-family: 'Microsoft Sans Serif';
+                font-size: small;
+                line-height: 30px;
+            }
+    </style>
+}
+@section headscript{
+
+}
+<div class="row">
+    <div style="position:relative; left: 3.5%; margin-top: 1.5%;" class="col-md-7 col-md-offset-1">
+        <div id="infoBox" style="float: left; width: 30%;" class="col-md-4">
+            <div>
+                <h5><b>热门下载</b></h5>
+                <hr />
+                <ul id="PopularDownload"></ul>
+            </div>
+            <div>
+                <h5><b>最新试卷</b></h5>
+                <hr />
+                <ul id="LatestPaper"></ul>
+            </div>
+        </div>
+        <div id="explainBox" style="position: relative;" class="col-md-11 col-md-offset-4">
+            <ul>
+                <li>
+                    <br />@Html.Raw(ViewBag.QuestionInfo.Question_Title)<br />
+                </li>
+                <li>
+                    <br />
+                    <h3 style="display: inline;"><span style="font-size: 17px; font-weight: 100;" class="label label-success">答案</span></h3>
+                    <span style="margin-left: 20px;">@Html.Raw(ViewBag.QuestionInfo.Question_Answer)</span>
+                    <br />
+                </li>
+                <li>
+                    <br />
+                    <h3 style="display: inline;"><span style="font-size: 17px; font-weight: 100;" class="label label-success">解析</span></h3>
+                    <span style="margin-left: 20px;">@Html.Raw(ViewBag.QuestionInfo.Question_Explain)</span>
+                    <br />
+                </li>
+                <li style="margin:10px 0">
+                    <input type="hidden" id="Related" value="@ViewBag.Related.Paper_Name" />
+                    <h5><b>相关试题</b></h5>
+                    <a onclick="Preview('@ViewBag.Related.Paper_Id')">
+                        <img id="wordImg" src="/Content/img/word.gif" alt="" />&nbsp;@ViewBag.Related.Paper_Name
+                    </a>
+                    <a id="wordDown" style="margin-left:15px;" href="@ViewBag.Related.Paper_Path"><span class="label label-info">下载</span></a><br />
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+@section script{
+    <script type="text/javascript">
+        if ($('#Related').val() == '无') {
+            $('#wordImg').hide();
+            $('#wordDown').hide();
+        }
+        $(document).ready(function () {
+            $.ajax({
+                url: '/GE/PopularDownload',
+                type: 'post',
+                dataType: 'json',
+                success: function (data) {
+                    $.each(data, function () {
+                        $('#PopularDownload').append("<li><a onclick='Preview(\"" + this.Paper_Id + "\")' title='" + this.Paper_Name + "'>" + '<img src="/Content/img/word.gif" alt="" />&nbsp;' + checkNull(this.Paper_Name) + '..</a><a onclick="AddDownloadNum(\''+this.Paper_Id+'\')"  href=' + this.Paper_Path + ' style="float:right;">下载</a></li>');
+                    });
+                }
+            });
+            $.ajax({
+                url: '/GE/LatestPaper',
+                type: 'post',
+                dataType: 'json',
+                success: function (data) {
+                    $.each(data, function () {
+                        $('#LatestPaper').append("<li><a onclick='Preview(\"" + this.Paper_Id + "\")' title='" + this.Paper_Name + "'>" + '<img src="/Content/img/word.gif" alt="" />&nbsp;' + checkNull(this.Paper_Name) + '..</a><a onclick="AddDownloadNuum(\''+this.Paper_Id+'\')" href=' + this.Paper_Path + ' style="float:right;">下载</a></li>');
+                    });
+                }
+            });
+        });
+    </script>
+}

@@ -1,0 +1,295 @@
+﻿@{
+    ViewBag.Title = "试卷库";
+    Layout = "~/Views/Shared/_LayoutPage2.cshtml";
+}
+
+@section css{
+    <style type="text/css">
+        #filterBox {
+            position: relative;
+            border: solid #d8d8d8 thin;
+        }
+
+            #filterBox * {
+                font-family: 'Microsoft New Tai Lue';
+                font-size: small;
+            }
+
+        #contentBox {
+            position: relative;
+            border: solid #d8d8d8 thin;
+            margin-top: 7px;
+        }
+
+        #contentTable td {
+            line-height: 35px;
+            font-family: 'Microsoft New Tai Lue';
+            font-size: small;
+            border-bottom: solid #d8d8d8 thin;
+        }
+
+            #contentTable td:hover {
+                background-color: rgba(191, 226, 222, 0.32);
+            }
+
+        #infoBox {
+            position: relative;
+            border: solid #d8d8d8 thin;
+            font-family: 'Microsoft New Tai Lue';
+            font-size: small;
+            margin-left: 5px;
+            margin-top: 7px;
+            width: 24.55%;
+        }
+
+            #infoBox * {
+                line-height: 35px;
+            }
+    </style>
+}
+@section headscript{
+    <script type="text/javascript">
+        function IsNull(str) {
+            if (str == null) {
+                return '匿名';
+            }
+            else {
+                return str;
+            }
+        }
+        function Refresh() {
+            window.location.href = '/BG/PaperLibrary?Grade=' + $('#Grade').val() + '&Subject=' + $('#Subject').val() + '&Year=' + $('#Year').val() + '&Kind=' + $('#Kind').val();
+        }
+        function deletePaper(Paper_Id)
+        {
+            if (confirm('确定删除?'))
+            {
+                $.ajax({
+                    url: '/BG/deletePaper',
+                    type: 'post',
+                    dataType: 'html',
+                    data: { Paper_Id: Paper_Id },
+                    success: function (data) {
+                        if (data == 'success') {
+                            alert('删除成功!');
+                            location.reload();
+                        }
+                        else {
+                            alert('操作失败!');
+                        }
+                    }
+                });
+            }
+        }
+        function LoadPaper() {
+            $.ajax({
+                url: '/BG/LoadPaper',
+                type: 'post',
+                dataType: 'json',
+                data: {
+                    Grade: $('#Grade').val(),
+                    Subject: $('#Subject').val(),
+                    Year: $('#Year').val(),
+                    Kind: $('#Kind').val()
+                },
+                success: function (data) {
+                    $.each(data, function () {
+                        $('#contentTable tbody').append("<tr><td><a onclick='Preview(\"" + this.Paper_Id + "\")' >" + '<img src="/Content/img/word.gif" alt="" />&nbsp;&nbsp;' + this.Paper_Name + '</a><a onclick="deletePaper(\''+this.Paper_Id+'\')" style="float:right;margin-left:10px;"><span class="glyphicon glyphicon-trash"></span>&nbsp;删除</a><a href=' + this.Paper_Path + '  style="float:right;margin-left:10px;"><span class="glyphicon glyphicon-download-alt"></span>&nbsp;直接下载</a><a onclick="Preview(\'' + this.Paper_Id + '\')" style="float:right;"><span class="glyphicon glyphicon-eye-open"></span>&nbsp;在线预览</a><br/>下载次数:' + this.Paper_Download + '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;更新时间:' + this.Paper_Year + '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;作者:' + IsNull(this.Paper_Author) + '</td></tr>');
+                    });
+                    $('#contentTable').dataTable({
+                        oLanguage: {
+                            sUrl: "/Content/DataTables-1.10.4/cn.txt"
+                        }
+                    });
+                }
+            });
+        }
+        $(document).ready(function () {
+            if ($('#Grade').val() == '七年级' || $('#Grade').val() == '八年级' || $('#Grade').val() == '九年级') {
+                $('.primary').hide();
+                $('.high').hide();
+            }
+            else if ($('#Grade').val() == '十年级' || $('#Grade').val() == '十一年级' || $('#Grade').val() == '十二年级') {
+                $('.primary').hide();
+                $('.junior').hide();
+            }
+            else if ($('#Grade').val() == '全部') {
+            }
+            else {
+                $('.junior').hide();
+                $('.high').hide();
+            }
+            $.ajax({
+                url: '/GE/PopularDownload',
+                type: 'post',
+                dataType: 'json',
+                success: function (data) {
+                    $.each(data, function () {
+                        $('#PopularDownload').append("<li><a onclick='Preview(\"" + this.Paper_Id + "\")' title='" + this.Paper_Name + "'>" + '<img src="/Content/img/word.gif" alt="" />&nbsp;' + checkNull(this.Paper_Name) + '...</a><a onclick="AddDownloadNum(\'' + this.Paper_Id + '\')" href=' + this.Paper_Path + ' style="float:right;">下载</a></li>');
+                    });
+                }
+            });
+            $.ajax({
+                url: '/GE/LatestPaper',
+                type: 'post',
+                dataType: 'json',
+                success: function (data) {
+                    $.each(data, function () {
+                        $('#LatestPaper').append("<li><a onclick='Preview(\"" + this.Paper_Id + "\")' title='" + this.Paper_Name + "'>" + '<img src="/Content/img/word.gif" alt="" />&nbsp;' + checkNull(this.Paper_Name) + '...</a><a onclick="AddDownloadNum(\'' + this.Paper_Id + '\')" href=' + this.Paper_Path + ' style="float:right;">下载</a></li>');
+                    });
+                }
+            });
+        });
+    </script>
+}
+<input type="hidden" id="Grade" value="@ViewBag.Grade" />
+<input type="hidden" id="Subject" value="@ViewBag.Subject" />
+<input type="hidden" id="Year" value="@ViewBag.Year" />
+<input type="hidden" id="Kind" value="@ViewBag.Kind" />
+<div style="position: relative; left: 3.5%; margin-top:15px;width:84%;" class="col-md-11 col-md-offset-1">
+    <div class="row">
+        <div id="filterBox" class="col-md-11">
+            <div id="gradeBox">
+                <ul class="nav nav-pills">
+                    <li role="presentation">
+                        <label style="line-height: 40px;">适用年级:</label>
+                    </li>
+                    <li role="presentation"><a><span>全部</span></a></li>
+                    <li role="presentation"><a><span>一年级</span></a></li>
+                    <li role="presentation"><a><span>二年级</span></a></li>
+                    <li role="presentation"><a><span>三年级</span></a></li>
+                    <li role="presentation"><a><span>四年级</span></a></li>
+                    <li role="presentation"><a><span>五年级</span></a></li>
+                    <li role="presentation"><a><span>六年级</span></a></li>
+                    <li role="presentation"><a><span>七年级</span></a></li>
+                    <li role="presentation"><a><span>八年级</span></a></li>
+                    <li role="presentation"><a><span>九年级</span></a></li>
+                    <li role="presentation"><a><span>十年级</span></a></li>
+                    <li role="presentation"><a><span>十一年级</span></a></li>
+                    <li role="presentation"><a><span>十二年级</span></a></li>
+                </ul>
+            </div>
+            <div id="subjectBox">
+                <ul class="nav nav-pills">
+                    <li role="presentation">
+                        <label style="line-height: 40px;">试卷学科:</label>
+                    </li>
+                    <li role="presentation"><a><span>全部</span></a></li>
+                    <li role="presentation"><a><span>语文</span></a></li>
+                    <li role="presentation"><a><span>数学</span></a></li>
+                    <li role="presentation"><a><span>英语</span></a></li>
+                    <li class="no_primary_subject" role="presentation"><a><span>物理</span></a></li>
+                    <li class="no_primary_subject" role="presentation"><a><span>化学</span></a></li>
+                    <li class="no_primary_subject" role="presentation"><a><span>历史</span></a></li>
+                    <li class="no_primary_subject" role="presentation"><a><span>政治思品</span></a></li>
+                    <li class="no_primary_subject" role="presentation"><a><span>地理</span></a></li>
+                    <li class="no_primary_subject" role="presentation"><a><span>生物</span></a></li>
+                </ul>
+            </div>
+            <div id="yearBox">
+                <ul class="nav nav-pills">
+                    <li role="presentation">
+                        <label style="line-height: 40px;">试卷年份:</label>
+                    </li>
+                    <li role="presentation"><a><span>全部</span></a></li>
+                    <li role="presentation"><a><span>@Convert.ToInt32(ViewBag.Years - 4)</span></a></li>
+                    <li role="presentation"><a><span>@Convert.ToInt32(ViewBag.Years - 3)</span></a></li>
+                    <li role="presentation"><a><span>@Convert.ToInt32(ViewBag.Years - 2)</span></a></li>
+                    <li role="presentation"><a><span>@Convert.ToInt32(ViewBag.Years - 1)</span></a></li>
+                    <li role="presentation"><a><span>@ViewBag.Years</span></a></li>
+                </ul>
+            </div>
+            <div id="kindBox">
+                <ul class="nav nav-pills">
+                    <li role="presentation">
+                        <label style="line-height: 40px;">试卷类型:</label>
+                    </li>
+                    <li role="presentation"><a><span>全部</span></a></li>
+                    <li role="presentation"><a><span>同步试卷</span></a></li>
+                    <li role="presentation"><a><span>单元试卷</span></a></li>
+                    <li role="presentation"><a><span>专题试卷</span></a></li>
+                    <li role="presentation"><a><span>月考试卷</span></a></li>
+                    <li role="presentation"><a><span>期中试卷</span></a></li>
+                    <li role="presentation"><a><span>期末试卷</span></a></li>
+                    <li role="presentation" class="primary"><a><span>升中试卷</span></a></li>
+                    <li role="presentation"><a class="junior"><span>中考试卷</span></a></li>
+                    <li role="presentation" class="high"><a><span>高考试卷</span></a></li>
+                    <li role="presentation"><a><span>竞赛试卷</span></a></li>
+                </ul>
+            </div>
+
+        </div>
+    </div>
+    <div class="row">
+        <div id="contentBox" class="col-md-8">
+            <table id="contentTable">
+                <thead>
+                    <tr>
+                        <td></td>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+                <tfoot>
+                    <tr>
+                        <td></td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+        <div id="infoBox" class="col-md-3">
+            <br />
+            <button type="button" class="btn btn-default" style="line-height:15px;margin-left:30%;">上传试卷</button>
+            <ul id="PopularDownload"><li style="border-bottom: solid #d8d8d8 thin;"><b>热门下载</b></li></ul>
+            <ul id="LatestPaper"><li style="border-bottom: solid #d8d8d8 thin;"><b>最新试卷</b></li></ul>
+        </div>
+    </div>
+</div>
+@section script{
+    <script type="text/javascript">
+        if ($('#Grade').val() != '七年级' && $('#Grade').val() != '八年级' && $('#Grade').val() != '九年级' && $('#Grade').val() != '十年级' && $('#Grade').val() != '十一年级' && $('#Grade').val() != '十二年级' && $('#Grade').val() != '全部') {
+            $('.no_primary_subject').hide();
+        }
+        $('#infoBox button').click(function () {
+            window.location.href = '/BG/Extension?Type=上传试卷';
+        });
+        $(document).ready(function () {
+            $('#gradeBox ul li a span').each(function () {
+                if ($(this).html() == $('#Grade').val()) {
+                    $(this).addClass('label').addClass('label-success');
+                }
+            });
+            $('#subjectBox ul li a span').each(function () {
+                if ($(this).html() == $('#Subject').val()) {
+                    $(this).addClass('label').addClass('label-success');
+                }
+            });
+            $('#yearBox ul li a span').each(function () {
+                if ($(this).html() == $('#Year').val()) {
+                    $(this).addClass('label').addClass('label-success');
+                }
+            });
+            $('#kindBox ul li a span').each(function () {
+                if ($(this).html() == $('#Kind').val()) {
+                    $(this).addClass('label').addClass('label-success');
+                }
+            });
+            LoadPaper();
+        });
+        $('#gradeBox ul li a').click(function () {
+            $('#Grade').val($(this).children().html());
+            Refresh();
+        });
+        $('#subjectBox ul li a').click(function () {
+            $('#Subject').val($(this).children().html());
+            Refresh();
+        });
+        $('#yearBox ul li a').click(function () {
+            $('#Year').val($(this).children().html());
+            Refresh();
+        });
+        $('#kindBox ul li a').click(function () {
+            $('#Kind').val($(this).children().html());
+            Refresh();
+        });
+    </script>
+}

@@ -1,0 +1,118 @@
+﻿<!DOCTYPE html>
+
+<html>
+<head>
+    <link href="~/Content/zTree/zTreeStyle/zTreeStyle.css" rel="stylesheet" />
+    <link href="~/Content/bootstrap-3.3.4-dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/Content/css/_LayoutPage2.css" rel="stylesheet" />
+    <script src="~/Content/js/jquery-1.11.1.min.js"></script>
+    <script src="~/Content/bootstrap-3.3.4-dist/js/bootstrap.min.js"></script>
+    <script src="~/Content/zTree/js/jquery.ztree.all-3.5.min.js"></script>
+    <link href="~/Content/DataTables-1.10.4/media/css/jquery.dataTables.min.css" rel="stylesheet" />
+    <link href="~/Content/DataTables-1.10.4/examples/resources/bootstrap/3/dataTables.bootstrap.css" rel="stylesheet" />
+    <script src="~/Content/DataTables-1.10.4/media/js/jquery.dataTables.min.js"></script>
+    <script src="~/Content/DataTables-1.10.4/examples/resources/bootstrap/3/dataTables.bootstrap.js"></script>
+    @RenderSection("css", false)
+    @RenderSection("headscript", false)
+    <meta name="viewport" content="width=device-width" />
+    <link rel="shortcut icon" href="/Content/img/logo.ico" />
+    <title>@ViewBag.Title</title>
+</head>
+<body>
+    <div>
+        <input type="hidden" id="Title" value="@ViewBag.Title" />
+        <div id="top">
+            <span style="line-height: 25px; margin-left: 15%;">欢迎来到题库中心!</span>
+            <span style="line-height: 25px; margin-left: 55%;">江门力德<span style="font-weight: 600; color: #cecdcd;">&nbsp;|&nbsp;</span><a href="/EO/index">在线题库首页</a></span>
+        </div>
+        <div style="width: 100%; height: 100px;">
+            <img style="margin: 20px auto auto 20%; float: left;" src="~/Content/img/logo.png" />
+            <ul id="LayoutMenu" class="nav nav-pills" style="position: relative; top: 25%;">
+                <li role="presentation"><a href="/BG/Index"><span style="font-size: medium;">&nbsp;首页&nbsp;&nbsp;</span></a></li>
+                <li role="presentation"><a href="/BG/SetVolumeOnline"><span style="font-size: medium;">&nbsp;在线组卷&nbsp;</span></a></li>
+                <li role="presentation"><a href="/BG/TestLibrary"><span style="font-size: medium;">&nbsp;试题库&nbsp;</span></a></li>
+                <li role="presentation"><a href="/BG/PaperLibrary"><span style="font-size: medium;">&nbsp;试卷库&nbsp;</span></a></li>
+                <li role="presentation"><a href="/BG/Extension"><span style="font-size: medium">&nbsp;扩展&nbsp;</span></a></li>
+            </ul>
+        </div>
+        <div style="border: solid #d8d8d8 thin;"></div>
+        <div>
+            @RenderBody()
+        </div>
+        <div id="footer" class="row">
+            <div class="content">
+                <div class="shengming">
+                    <p><a style="margin-left: 0;">免责声明</a><a>联系我们</a><a>意见与建议</a></p>
+                    <p>
+                        地址：广东江门蓬江区 邮编：529000© 2004-2014 江门力德科技 粤ICP备09188801号 粤教信息(2013)2号
+                    </p>
+                </div>
+                <div class="information">
+                    <p>网络支持：江门市力德科技有限公司</p>
+                    <p>工作时间: AM8:00-PM6:00 </p>
+                    <p>
+                        服务电话: 0755-25526569(总机)
+                        <script src="http://s25.cnzz.com/stat.php?id=1840905&web_id=1840905&show=pic1" type="text/javascript" language="JavaScript"></script>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script type="text/javascript">
+    $(document).ready(function () {
+        switch ($('#Title').val()) {
+            case '首页': $('#LayoutMenu li:eq(0)').children().addClass('label').addClass('label-info'); break;
+            case '在线组卷': $('#LayoutMenu li:eq(1) span').addClass('label').addClass('label-info'); break;
+            case '试题库': $('#LayoutMenu li:eq(2) span').addClass('label').addClass('label-info'); break;
+            case '试卷库': $('#LayoutMenu li:eq(3) span').addClass('label').addClass('label-info'); break;
+            case '扩展': $('#LayoutMenu li:eq(4) span').addClass('label').addClass('label-info'); break;
+            default: $('#LayoutMenu li:eq(0) span').addClass('label').addClass('label-info'); break;
+        }
+    });
+    function Download(Question_Id) {
+        $.ajax({
+            url: '/GE/Download',
+            type: 'post',
+            dataType: 'html',
+            data: { Question_Id: Question_Id },
+            success: function (data) {
+                window.open(data);
+            }
+        });
+    }
+    function explain(Question_Id) {
+        window.open('/GE/Explain?Question_Id=' + Question_Id);
+    }
+    function Preview(Paper_Id) {
+        $.ajax({
+            url: '/GE/Preview',
+            type: 'post',
+            dataType: 'html',
+            data: { Paper_Id: Paper_Id },
+            success: function (data) {
+                window.open(data);
+            }
+        });
+    }
+    function AddDownloadNum(Paper_Id) {
+        $.ajax({
+            url: '/GE/AddDownloadNum',
+            type: 'post',
+            data: { Paper_Id: Paper_Id }
+        });
+    }
+    function checkNull(i) {
+        if (i == null) {
+            return '';
+        }
+        else if (i.length > 11) {
+            return i.substr(0, 11);
+        }
+        else {
+            return i;
+        }
+    }
+</script>
+@RenderSection("script", false)
+</html>

@@ -1,0 +1,643 @@
+﻿@{
+    ViewBag.Title = "扩展";
+    Layout = "~/Views/Shared/_LayoutPage2.cshtml";
+}
+@section css{
+    <style type="text/css">
+        #extension {
+            position: relative;
+            border: solid #d8d8d8 thin;
+        }
+
+            #extension * {
+                font-family: 'Microsoft PhagsPa';
+                font-size: small;
+            }
+
+        #newTest, #uploadPaper {
+            position: relative;
+            border: solid #d8d8d8 thin;
+            margin-top: 15px;
+            height: 500px;
+        }
+
+        #filterBox {
+            position: relative;
+        }
+
+            #filterBox * {
+                font-family: 'Microsoft PhagsPa';
+                font-size: small;
+            }
+
+        #retrieveBox {
+            border: solid #d8d8d8 thin;
+        }
+    </style>
+}
+
+@section headscript{
+    <script src="~/Content/js/jquery.unobtrusive-ajax.min.js"></script>
+    <script src="~/Content/js/menuTree2.js"></script>
+    <script src="~/ueditor/ueditor.config.js"></script>
+    <script src="~/ueditor/ueditor.all.min.js"></script>
+    <script src="~/ueditor/lang/zh-cn/zh-cn.js"></script>
+    <script src="~/ueditor/kityformula-plugin/addKityFormulaDialog.js"></script>
+    <script src="~/ueditor/kityformula-plugin/getKfContent.js"></script>
+    <script src="~/ueditor/kityformula-plugin/defaultFilterFix.js"></script>
+
+    <script type="text/javascript">
+        function afterSuccess(result) {
+            if (result == 'success') {
+                alert('上传成功!');
+            }
+            else {
+                alert('上传失败!');
+            }
+        }
+        $(document).ready(function () {
+            $('#periodBox ul li span').each(function () {
+                if ($(this).html() == $('#Period').val()) {
+                    $(this).addClass('label').addClass('label-success');
+                }
+            });
+            $('#subjectBox ul li span').each(function () {
+                if ($(this).html() == $('#Subject').val()) {
+                    $(this).addClass('label').addClass('label-success');
+                }
+            });
+            $('#topicBox ul li span').each(function () {
+                if ($(this).html() == $('#Topic').val()) {
+                    $(this).addClass('label').addClass('label-success');
+                }
+            });
+            $('#periodBox ul li a').click(function () {
+                $('#Period').val($(this).children().html());
+                $('#Grade').attr('value', null);
+                $('#Grade_Son').attr('value', null);
+                $('#Grade_Grandson').attr('value', null);
+                $('#Subject').val('语文');
+                Refresh();
+            });
+            $('#subjectBox ul li a').click(function () {
+                $('#Subject').val($(this).children().html());
+                $('#Grade_Son').attr('value', null);
+                $('#Grade_Grandson').attr('value', null);
+                $('#Topic').val('单选题');
+                Refresh();
+            });
+            $('#topicBox ul li a').click(function () {
+                $('#Topic').val($(this).children().html());
+                Refresh();
+            });
+        });
+        function Refresh() {
+
+            window.location.href = '/BG/Extension?Type=' + $('#Type').val() + '&Period=' + $('#Period').val() + '&Subject=' + $('#Subject').val() + '&Topic=' + $('#Topic').val() + '&Grade=' + $('#Grade').val() + '&Grade_Son=' + $('#Grade_Son').val() + '&Grade_Grandson=' + $('#Grade_Grandson').val();
+
+        }
+    </script>
+}
+<input type="hidden" id="Type" value="@ViewBag.Type" />
+<input type="hidden" id="Tip" value="@ViewBag.Tip" />
+<input type="hidden" id="Period" value="@ViewBag.Period" />
+<input type="hidden" id="Subject" value="@ViewBag.Subject" />
+<input type="hidden" id="Topic" value="@ViewBag.Topic" />
+<input type="hidden" id="Grade" value="@ViewBag.Grade" />
+<input type="hidden" id="Grade_Son" value="@ViewBag.Grade_Son" />
+<input type="hidden" id="Grade_Grandson" value="@ViewBag.Grade_Grandson" />
+<input type="hidden" id="Title_" />
+<input type="hidden" id="Answer" />
+<input type="hidden" id="Explain" />
+<div style="position: relative; left: 3.5%; margin-top: 15px;" class="col-md-10 col-md-offset-1">
+    <div class="row">
+        <div id="extension" class="col-md-11">
+            <ul class="nav nav-pills">
+                <li role="presentation">
+                    <label style="line-height: 35px;">扩展:</label>
+                </li>
+                <li role="presentation"><a><span>新建试题</span></a></li>
+                <li role="presentation"><a><span>上传试卷</span></a></li>
+                <li id="Map" role="presentation"><span style="line-height: 35px; position: relative; left: 325px;"></span></li>
+            </ul>
+        </div>
+    </div>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            if ($('#Type').val() == '新建试题') {
+                $('#Map').children().html('当前位置:' + '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' + $('#Grade').val() + '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' + $('#Grade_Son').val() + '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' + $('#Grade_Grandson').val());
+            }
+        });
+    </script>
+    <div class="row">
+        <!--新建试题模块-->
+        <div id="newTest" class="col-md-11">
+            <script id="editor" name="editor" type="text/plain" style="width: 500px; height: 250px; float: left;">
+            </script>
+            <div id="filterBox">
+                <div id="periodBox" style="margin-left: 525px;">
+                    <ul class="nav nav-pills">
+                        <li role="presentation">
+                            <label style="line-height: 40px;">学段:</label>
+                        </li>
+                        <li role="presentation"><a><span>小学试题</span></a></li>
+                        <li role="presentation"><a><span>初中试题</span></a></li>
+                        <li role="presentation"><a><span>高中试题</span></a></li>
+                    </ul>
+                </div>
+                <div id="subjectBox" style="margin-left: 525px; position: relative; top: -385px;">
+                    <ul class="nav nav-pills">
+                        <li role="presentation">
+                            <label style="line-height: 40px;">学科:</label>
+                        </li>
+                        <li role="presentation"><a><span>语文</span></a></li>
+                        <li role="presentation"><a><span>数学</span></a></li>
+                        <li role="presentation"><a><span>英语</span></a></li>
+                        <li class="no_primary_subject" role="presentation"><a><span>物理</span></a></li>
+                        <li class="no_primary_subject" role="presentation"><a><span>化学</span></a></li>
+                        <li class="no_primary_subject" role="presentation"><a><span>历史</span></a></li>
+                        <li class="no_primary_subject" role="presentation"><a><span>政治思品</span></a></li>
+                        <li class="no_primary_subject" role="presentation"><a><span>地理</span></a></li>
+                        <li class="no_primary_subject" role="presentation"><a><span>生物</span></a></li>
+                    </ul>
+                </div>
+                <div id="topicBox" style="margin-left: 525px; position: relative; top: -385px;">
+                    <ul id="topic_yuwen" class="nav nav-pills topic">
+                        <li role="presentation">
+                            <label style="line-height: 40px;">题型:</label>
+                        </li>
+                        <li role="presentation"><a><span>单选题</span></a></li>
+                        <li role="presentation"><a><span>写作题</span></a></li>
+                        <li role="presentation"><a><span>现代文阅读</span></a></li>
+                        <li role="presentation"><a><span>文言文阅读</span></a></li>
+                        <li role="presentation"><a><span>诗歌鉴赏</span></a></li>
+                        <li role="presentation"><a><span>语言表达</span></a></li>
+                        <li role="presentation"><a><span>名著导读</span></a></li>
+                        <li role="presentation"><a><span>默写</span></a></li>
+                        <li role="presentation"><a><span>书写</span></a></li>
+                        <li role="presentation"><a><span>其它题型</span></a></li>
+                    </ul>
+                    <ul id="topic_shuxue" class="nav nav-pills topic">
+                        <li role="presentation">
+                            <label style="line-height: 40px;">题型:</label>
+                        </li>
+                        <li role="presentation"><a><span>单选题</span></a></li>
+                        <li role="presentation"><a><span>判断题</span></a></li>
+                        <li role="presentation"><a><span>填空题</span></a></li>
+                        <li role="presentation"><a><span>计算题</span></a></li>
+                        <li role="presentation"><a><span>解答题</span></a></li>
+                        <li role="presentation"><a><span>其它题型</span></a></li>
+                    </ul>
+                    <ul id="topic_yingyu" class="nav nav-pills topic">
+                        <li role="presentation">
+                            <label style="line-height: 40px;">题型:</label>
+                        </li>
+                        <li role="presentation"><a><span>单选题</span></a></li>
+                        <li role="presentation"><a><span>填空题</span></a></li>
+                        <li role="presentation"><a><span>完型填空</span></a></li>
+                        <li role="presentation"><a><span>阅读理解</span></a></li>
+                        <li role="presentation"><a><span>写作题</span></a></li>
+                        <li role="presentation"><a><span>单词拼写</span></a></li>
+                        <li role="presentation"><a><span>改错</span></a></li>
+                        <li role="presentation"><a><span>信息分析题</span></a></li>
+                        <li role="presentation"><a><span>句型转换</span></a></li>
+                        <li role="presentation"><a><span>补充句子</span></a></li>
+                        <li role="presentation"><a><span>翻译</span></a></li>
+                        <li role="presentation"><a><span>其它题型</span></a></li>
+                        <li role="presentation"><a><span>单词造句</span></a></li>
+                        <li role="presentation"><a><span>选词填空</span></a></li>
+                        <li role="presentation"><a><span>其它题型</span></a></li>
+                    </ul>
+                    <ul id="topic_wuli" class="nav nav-pills topic">
+                        <li role="presentation">
+                            <label style="line-height: 40px;">题型:</label>
+                        </li>
+                        <li role="presentation"><a><span>单选题</span></a></li>
+                        <li role="presentation"><a><span>多选题</span></a></li>
+                        <li role="presentation"><a><span>填空题</span></a></li>
+                        <li role="presentation"><a><span>问答题</span></a></li>
+                        <li role="presentation"><a><span>计算题</span></a></li>
+                        <li role="presentation"><a><span>实验题</span></a></li>
+                        <li role="presentation"><a><span>作图题</span></a></li>
+                        <li role="presentation"><a><span>探究题</span></a></li>
+                        <li role="presentation"><a><span>综合题</span></a></li>
+                        <li role="presentation"><a><span>其它题型</span></a></li>
+                    </ul>
+                    <ul id="topic_huaxue" class="nav nav-pills topic">
+                        <li role="presentation">
+                            <label style="line-height: 40px;">题型:</label>
+                        </li>
+                        <li role="presentation"><a><span>单选题</span></a></li>
+                        <li role="presentation"><a><span>填空题</span></a></li>
+                        <li role="presentation"><a><span>问答题</span></a></li>
+                        <li role="presentation"><a><span>计算题</span></a></li>
+                        <li role="presentation"><a><span>实验题</span></a></li>
+                        <li role="presentation"><a><span>推断题</span></a></li>
+                        <li role="presentation"><a><span>探究题</span></a></li>
+                        <li role="presentation"><a><span>信息分析题</span></a></li>
+                        <li role="presentation"><a><span>其它题型</span></a></li>
+                    </ul>
+                    <ul id="topic_lishi" class="nav nav-pills topic">
+                        <li role="presentation">
+                            <label style="line-height: 40px;">题型:</label>
+                        </li>
+                        <li role="presentation"><a><span>单选题</span></a></li>
+                        <li role="presentation"><a><span>判断题</span></a></li>
+                        <li role="presentation"><a><span>填空题</span></a></li>
+                        <li role="presentation"><a><span>问答题</span></a></li>
+                        <li role="presentation"><a><span>探究题</span></a></li>
+                        <li role="presentation"><a><span>综合题</span></a></li>
+                        <li role="presentation"><a><span>其它题型</span></a></li>
+                    </ul>
+                    <ul id="topic_zhengzhisipin" class="nav nav-pills topic">
+                        <li role="presentation">
+                            <label style="line-height: 40px;">题型:</label>
+                        </li>
+                        <li role="presentation"><a><span>单选题</span></a></li>
+                        <li role="presentation"><a><span>多选题</span></a></li>
+                        <li role="presentation"><a><span>判断题</span></a></li>
+                        <li role="presentation"><a><span>填空题</span></a></li>
+                        <li role="presentation"><a><span>问答题</span></a></li>
+                        <li role="presentation"><a><span>探究题</span></a></li>
+                        <li role="presentation"><a><span>综合题</span></a></li>
+                        <li role="presentation"><a><span>辨析题</span></a></li>
+                        <li role="presentation"><a><span>其它题型</span></a></li>
+                    </ul>
+                    <ul id="topic_dili" class="nav nav-pills topic">
+                        <li role="presentation">
+                            <label style="line-height: 40px;">题型:</label>
+                        </li>
+                        <li role="presentation"><a><span>单选题</span></a></li>
+                        <li role="presentation"><a><span>判断题</span></a></li>
+                        <li role="presentation"><a><span>填空题</span></a></li>
+                        <li role="presentation"><a><span>综合题</span></a></li>
+                        <li role="presentation"><a><span>填表题</span></a></li>
+                        <li role="presentation"><a><span>连线题</span></a></li>
+                        <li role="presentation"><a><span>多选题</span></a></li>
+                        <li role="presentation"><a><span>其它题型</span></a></li>
+                    </ul>
+                    <ul id="topic_shengwu" class="nav nav-pills topic">
+                        <li role="presentation">
+                            <label style="line-height: 40px;">题型:</label>
+                        </li>
+                        <li role="presentation"><a><span>单选题</span></a></li>
+                        <li role="presentation"><a><span>多选题</span></a></li>
+                        <li role="presentation"><a><span>判断题</span></a></li>
+                        <li role="presentation"><a><span>填空题</span></a></li>
+                        <li role="presentation"><a><span>综合题</span></a></li>
+                        <li role="presentation"><a><span>探究题</span></a></li>
+                        <li role="presentation"><a><span>连线题</span></a></li>
+                        <li role="presentation"><a><span>其它题型</span></a></li>
+                    </ul>
+                    <hr />
+                </div>
+                <div id="retrieveBox" style="position:absolute;top:0;left:20px;" class="col-md-offset-12">
+                    <ul id="tree" class="ztree"></ul>
+                </div>
+            </div>
+            <div style="margin-left: 525px; position: relative; top: -350px;">
+                <span style="color:#808080;">蓝色代表当前阶段</span>
+                <h3><span class="PhasePrompt label label-info">题目</span><span style="color:#808080;position:relative;top:2px;">→</span><span class="PhasePrompt label label-warning">答案</span><span style="color:#808080;position:relative;top:2px;">→</span><span class="PhasePrompt label label-warning">解析</span></h3>
+                <div class="progress" style="margin-top: 15px;">
+                    <div id="progress" class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">
+                        <span>当前进度</span>
+                    </div>
+                </div>
+                <button onclick="GetKfContent()" type="button" class="btn btn-success">完成</button>
+                <script type="text/javascript">
+                    var tip = 0;
+                    function GetKfContent() {
+                        ue.getKfContent(function (content) {
+                            if (tip == 0) {
+                                if ($('#Grade').val() == '') {
+                                    alert('还没选择年级!');
+                                    $('#progress').attr('aria-valuenow', 30);
+                                    $('#progress').css('width', '0%');
+                                    return;
+                                }
+                                $('#Title_').val(content);
+                                $('#progress').attr('aria-valuenow', 30);
+                                $('#progress').css('width', '30%');
+                                $('.PhasePrompt').removeClass('label-info').removeClass('label-warning');
+                                $('.PhasePrompt').eq(1).addClass('label-info');
+                                $('.PhasePrompt').eq(0).addClass('label-warning');
+                                $('.PhasePrompt').eq(2).addClass('label-warning');
+                                ue.setContent('');
+                                tip++;
+                            }
+                            else if (tip == 1) {
+                                $('#Answer').val(content);
+                                $('#progress').attr('aria-valuenow', 60);
+                                $('#progress').css('width', '60%');
+                                $('.PhasePrompt').removeClass('label-info').removeClass('label-warning');
+                                $('.PhasePrompt').eq(2).addClass('label-info');
+                                $('.PhasePrompt').eq(0).addClass('label-warning');
+                                $('.PhasePrompt').eq(1).addClass('label-warning');
+                                ue.setContent('');
+                                tip++;
+                            }
+                            else {
+                                $('#Explain').val(content);
+                                $('#progress').attr('aria-valuenow', 100);
+                                $('#progress').css('width', '100%');
+                                tip = 0;
+                                $.ajax({
+                                    url: '/BG/NewTest',
+                                    type: 'post',
+                                    dataType: 'html',
+                                    data: {
+                                        Subject: $('#Subject').val(),
+                                        Topic: $('#Topic').val(),
+                                        Title: $('#Title_').val(),
+                                        Answer: $('#Answer').val(),
+                                        Explain: $('#Explain').val(),
+                                        Grade: $('#Grade').val(),
+                                        Grade_Son: $('#Grade_Son').val(),
+                                        Grade_Grandson: $('#Grade_Grandson').val()
+                                    },
+                                    success: function (data) {
+                                        if (data == 'success') {
+                                            alert('成功创建试题!');
+                                            $('#progress').attr('aria-valuenow', 0);
+                                            $('#progress').css('width', '0%');
+                                            $('.PhasePrompt').removeClass('label-info').removeClass('label-warning');
+                                            $('.PhasePrompt').eq(0).addClass('label-info');
+                                            $('.PhasePrompt').eq(1).addClass('label-warning');
+                                            $('.PhasePrompt').eq(2).addClass('label-warning');
+                                            ue.setContent('');
+                                        }
+                                        else {
+                                            alert('创建试题失败!');
+                                            ue.setContent('');
+                                            $('#progress').attr('aria-valuenow', 0);
+                                            $('#progress').css('width', '0%');
+                                            $('.PhasePrompt').removeClass('label-info').removeClass('label-warning');
+                                            $('.PhasePrompt').eq(0).addClass('label-info');
+                                            $('.PhasePrompt').eq(1).addClass('label-warning');
+                                            $('.PhasePrompt').eq(2).addClass('label-warning');
+                                        }
+                                    }
+                                });
+                            }
+                        });
+                    }
+                </script>
+            </div>
+        </div>
+        <!--上传文件模块-->
+        <div id="uploadPaper" class="col-md-11">
+            <form id="uploadForm" action="/BG/UpLoad" method="post" enctype="multipart/form-data">
+                <div style="margin-left: 38px;">
+                    <input id="File" name="File" type="file" style="margin: 25px auto;" />
+                    &nbsp;&nbsp;学科:<select id="Subject_upload" name="Subject_upload">
+                        <option value="语文">语文</option>
+                        <option value="数学">数学</option>
+                        <option value="英语">英语</option>
+                        <option value="物理">物理</option>
+                        <option value="化学">化学</option>
+                        <option value="历史">历史</option>
+                        <option value="政治思品">政治思品</option>
+                        <option value="历史">地理</option>
+                        <option value="生物">生物</option>
+                    </select>
+                    &nbsp;&nbsp;年级:
+                    <select id="Grade_upload" name="Grade_upload">
+                        <option value="一年级">一年级</option>
+                        <option value="二年级">二年级</option>
+                        <option value="三年级">三年级</option>
+                        <option value="四年级">四年级</option>
+                        <option value="五年级">五年级</option>
+                        <option value="六年级">六年级</option>
+                        <option value="七年级">七年级</option>
+                        <option value="八年级">八年级</option>
+                        <option value="九年级">九年级</option>
+                        <option value="十年级">十年级</option>
+                        <option value="十一年级">十一年级</option>
+                        <option value="十二年级">十二年级</option>
+                    </select>
+                    &nbsp;&nbsp;试卷类型:<select id="Kind" name="Kind">
+                        <option value="同步试卷">同步试卷</option>
+                        <option value="单元试卷">单元试卷</option>
+                        <option value="专题试卷">专题试卷</option>
+                        <option value="月考试卷">月考试卷</option>
+                        <option value="期中试卷">期中试卷</option>
+                        <option value="期末试卷">期末试卷</option>
+                        <option value="升中试卷">升中试卷</option>
+                        <option value="中考试卷">中考试卷</option>
+                        <option value="高中试卷">高中试卷</option>
+                        <option value="竞赛试卷">竞赛试卷</option>
+                    </select>
+                    &nbsp;&nbsp;试卷省份:<select id="Province" name="Province">
+                        <option value="广东">广东</option>
+                        <option value="北京">北京</option>
+                        <option value="上海">上海</option>
+                        <option value="天津">天津</option>
+                        <option value="重庆">重庆</option>
+                        <option value="江苏">江苏</option>
+                        <option value="浙江">浙江</option>
+                        <option value="山东">山东</option>
+                        <option value="湖北">湖北</option>
+                        <option value="吉林">吉林</option>
+                        <option value="河北">河北</option>
+                        <option value="福建">福建</option>
+                        <option value="安徽">安徽</option>
+                        <option value="四川">四川</option>
+                        <option value="湖南">湖南</option>
+                        <option value="江西">江西</option>
+                        <option value="辽宁">辽宁</option>
+                        <option value="黑龙江">黑龙江</option>
+                        <option value="山西">山西</option>
+                        <option value="河南">河南</option>
+                        <option value="陕西">陕西</option>
+                        <option value="云南">云南</option>
+                        <option value="甘肃">甘肃</option>
+                        <option value="贵州">贵州</option>
+                        <option value="广西">广西</option>
+                        <option value="海南">海南</option>
+                        <option value="青海">青海</option>
+                        <option value="内蒙古">内蒙古</option>
+                        <option value="西藏">西藏</option>
+                        <option value="宁夏">宁夏</option>
+                        <option value="新疆">新疆</option>
+                    </select>
+                    &nbsp;&nbsp;试卷年份:<select id="Year" name="Year">
+                        <option value="@Convert.ToInt32(ViewBag.Years - 4)">@Convert.ToInt32(ViewBag.Years - 4)</option>
+                        <option value="@Convert.ToInt32(ViewBag.Years - 3)">@Convert.ToInt32(ViewBag.Years - 3)</option>
+                        <option value="@Convert.ToInt32(ViewBag.Years - 2)">@Convert.ToInt32(ViewBag.Years - 2)</option>
+                        <option value="@Convert.ToInt32(ViewBag.Years - 1)">@Convert.ToInt32(ViewBag.Years - 1)</option>
+                        <option value="@ViewBag.Years">@ViewBag.Years</option>
+                    </select>
+                    &nbsp;&nbsp;作者:<input type="text" id="Author" name="Author" /><br />
+                    <br />
+                    <button id="uploadButton" style="margin-left: 35%;" type="button" class="btn btn-success">&nbsp;&nbsp;&nbsp;上传&nbsp;&nbsp;&nbsp;</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+@section script{
+    <script type="text/javascript">
+        $('.topic').hide();
+        if ($('#Tip').val() == 'success') {
+            alert('上传成功!');
+        }
+        else if ($('#Tip').val() == 'error') {
+            alert('上传失败!');
+        }
+        if ($('#Type').val() == '新建试题') {
+            $('#uploadPaper').hide();
+        }
+        else {
+            $('#newTest').hide();
+        }
+        $(document).ready(function () {
+            $('#extension ul li a span').each(function () {
+                if ($('#Period').val() == '小学试题') {
+                    $('.no_primary_subject').hide();
+                }
+                switch ($('#Subject').val()) {
+                    case '语文': $('#topic_yuwen').show(); $('#topic_yuwen li span').each(function () { if ($(this).html() == $('#Topic').val()) { $(this).addClass('label').addClass('label-success'); } }); break;
+                    case '数学': $('#topic_shuxue').show(); $('#topic_shuxue li span').each(function () { if ($(this).html() == $('#Topic').val()) { $(this).addClass('label').addClass('label-success'); } }); break;
+                    case '英语': $('#topic_yingyu').show(); $('#topic_yingyu li span').each(function () { if ($(this).html() == $('#Topic').val()) { $(this).addClass('label').addClass('label-success'); } }); break;
+                    case '物理': $('#topic_wuli').show(); $('#topic_wuli li span').each(function () { if ($(this).html() == $('#Topic').val()) { $(this).addClass('label').addClass('label-success'); } }); break;
+                    case '化学': $('#topic_huaxue').show(); $('#topic_huaxue li span').each(function () { if ($(this).html() == $('#Topic').val()) { $(this).addClass('label').addClass('label-success'); } }); break;
+                    case '历史': $('#topic_lishi').show(); $('#topic_lishi li span').each(function () { if ($(this).html() == $('#Topic').val()) { $(this).addClass('label').addClass('label-success'); } }); break;
+                    case '政治思品': $('#topic_zhengzhisipin').show(); $('#topic_zhengzhisipin li span').each(function () { if ($(this).html() == $('#Topic').val()) { $(this).addClass('label').addClass('label-success'); } }); break;
+                    case '地理': $('#topic_dili').show(); $('#topic_dili li span').each(function () { if ($(this).html() == $('#Topic').val()) { $(this).addClass('label').addClass('label-success'); } }); break;
+                    case '生物': $('#topic_shengwu').show(); $('#topic_shengwu li span').each(function () { if ($(this).html() == $('#Topic').val()) { $(this).addClass('label').addClass('label-success'); } }); break;
+
+                }
+                if ($(this).html() == $('#Type').val()) {
+                    $(this).addClass('label').addClass('label-success');
+                }
+            });
+        });
+        $('#uploadButton').click(function () {
+            if ($('#File').val() == '') {
+                alert('还没有选择文件!');
+            }
+            else {
+                $('#uploadForm').submit();
+            }
+        });
+        $('#extension ul li a').click(function () {
+            $('#Type').val($(this).children().html());
+            Refresh();
+        });
+    </script>
+    <script type="text/javascript">
+        var ue = UE.getEditor('editor');
+        var ue = UE.getEditor('editor', {
+            toolbars: [[
+                'fullscreen', 'source', '|',
+                'bold', 'italic', 'underline', '|', 'fontsize', '|', 'kityformula', 'preview'
+            ]]
+        });
+        function isFocus(e) {
+            alert(UE.getEditor('editor').isFocus());
+            UE.dom.domUtils.preventDefault(e)
+        }
+        function setblur(e) {
+            UE.getEditor('editor').blur();
+            UE.dom.domUtils.preventDefault(e)
+        }
+        function insertHtml() {
+            var value = prompt('插入html代码', '');
+            UE.getEditor('editor').execCommand('insertHtml', value)
+        }
+        function createEditor() {
+            enableBtn();
+            UE.getEditor('editor');
+        }
+
+        function getAllHtml() {
+            alert(UE.getEditor('editor').getAllHtml())
+        }
+        function getContent() {
+            var arr = [];
+            arr.push("使用editor.getContent()方法可以获得编辑器的内容");
+            arr.push("内容为：");
+            arr.push(UE.getEditor('editor').getContent());
+            alert(arr.join("\n"));
+        }
+        function getPlainTxt() {
+            var arr = [];
+            arr.push("使用editor.getPlainTxt()方法可以获得编辑器的带格式的纯文本内容");
+            arr.push("内容为：");
+            arr.push(UE.getEditor('editor').getPlainTxt());
+            alert(arr.join('\n'))
+        }
+        function setContent(isAppendTo) {
+            var arr = [];
+            arr.push("使用editor.setContent('欢迎使用ueditor')方法可以设置编辑器的内容");
+            UE.getEditor('editor').setContent('欢迎使用ueditor', isAppendTo);
+            alert(arr.join("\n"));
+        }
+        function setDisabled() {
+            UE.getEditor('editor').setDisabled('fullscreen');
+            disableBtn("enable");
+        }
+
+        function setEnabled() {
+            UE.getEditor('editor').setEnabled();
+            enableBtn();
+        }
+
+        function getText() {
+            //当你点击按钮时编辑区域已经失去了焦点，如果直接用getText将不会得到内容，所以要在选回来，然后取得内容
+            var range = UE.getEditor('editor').selection.getRange();
+            range.select();
+            var txt = UE.getEditor('editor').selection.getText();
+            alert(txt)
+        }
+
+        function getContentTxt() {
+            var arr = [];
+            arr.push("使用editor.getContentTxt()方法可以获得编辑器的纯文本内容");
+            arr.push("编辑器的纯文本内容为：");
+            arr.push(UE.getEditor('editor').getContentTxt());
+            alert(arr.join("\n"));
+        }
+        function hasContent() {
+            var arr = [];
+            arr.push("使用editor.hasContents()方法判断编辑器里是否有内容");
+            arr.push("判断结果为：");
+            arr.push(UE.getEditor('editor').hasContents());
+            alert(arr.join("\n"));
+        }
+        function setFocus() {
+            UE.getEditor('editor').focus();
+        }
+        function deleteEditor() {
+            disableBtn();
+            UE.getEditor('editor').destroy();
+        }
+        function disableBtn(str) {
+            var div = document.getElementById('btns');
+            var btns = UE.dom.domUtils.getElementsByTagName(div, "button");
+            for (var i = 0, btn; btn = btns[i++];) {
+                if (btn.id == str) {
+                    UE.dom.domUtils.removeAttributes(btn, ["disabled"]);
+                } else {
+                    btn.setAttribute("disabled", "true");
+                }
+            }
+        }
+        function enableBtn() {
+            var div = document.getElementById('btns');
+            var btns = UE.dom.domUtils.getElementsByTagName(div, "button");
+            for (var i = 0, btn; btn = btns[i++];) {
+                UE.dom.domUtils.removeAttributes(btn, ["disabled"]);
+            }
+        }
+
+        function getLocalData() {
+            alert(UE.getEditor('editor').execCommand("getlocaldata"));
+        }
+
+        function clearLocalData() {
+            UE.getEditor('editor').execCommand("clearlocaldata");
+            alert("已清空草稿箱")
+        }
+    </script>
+}

@@ -1,0 +1,308 @@
+﻿@{
+    Layout = "~/Views/Shared/_LayoutPage1.cshtml";
+}
+@section css{
+    <style type="text/css">
+        #filterBox {
+            position: relative;
+            border: solid #d8d8d8 thin;
+            width: 95%;
+        }
+
+        .fenge {
+            width: 95%;
+        }
+
+        #filterBox * {
+            font-family: 'Microsoft New Tai Lue';
+            font-size:small;
+        }
+
+        #subjectBox * {
+            font-family: 'Microsoft Himalaya';
+            font-size: small;
+            line-height: 35px;
+        }
+
+        #subjectBox ul li {
+            border-bottom: solid #d8d8d8 thin;
+        }
+
+        #paperList {
+            border: solid #d8d8d8 thin;
+            margin-left: 10px;
+            width: 77.4%;
+        }
+
+            #paperList tr {
+                font-family: 'Microsoft PhagsPa';
+                font-size: small;
+                line-height: 25px;
+            }
+
+            #paperList td {
+                border-bottom: solid #d8d8d8 thin;
+            }
+                #paperList td:hover {
+                       background-color:rgba(191, 226, 222, 0.32);
+                }
+    </style>
+}
+@section headscript{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $.ajax({
+                url: '/GE/StatisticsPaperNumber',
+                type: 'post',
+                dataType: 'json',
+                data: { Title: $('#Title').val() },
+                success: function (data) {
+
+                    if ($('#Title').val() == '小学试卷') {
+                        for (i = 0; i < 3; i++) {
+                            $('span.Num').eq(i).html('(' + data[i] + ')');
+                        }
+                    }
+                    else {
+                        for (i = 0; i < 9; i++)
+                        {
+                            $('span.Num').eq(i).html('(' + data[i] + ')');
+                        }
+                    }
+
+                }
+            });
+        });
+        function LoadPaper() {
+            $.ajax({
+                url: '/EO/LoadPaper',
+                type: 'post',
+                dataType: 'json',
+                data: {
+                    Title: $('#Title').val(),
+                    Grade: $('#Grade').val(),
+                    Year: $('#Year').val(),
+                    Kind: $('#Kind').val(),
+                    Province: $('#Province').val(),
+                    Subject: $('#Subject').val()
+                },
+                success: function (data) {
+                    $.each(data, function () {
+                        $('#paperListTable tbody').append("<tr><td><a onclick='Preview(\"" + this.Paper_Id + "\")' >" + '<img src="/Content/img/word.gif" alt="" />&nbsp;&nbsp;' + this.Paper_Name + '<a><a href=' + this.Paper_Path + '  style="float:right;margin-left:15px;"><span class="glyphicon glyphicon-download-alt"></span>&nbsp;直接下载</a><a onclick="Preview(\'' + this.Paper_Id + '\')" style="float:right;"><span class="glyphicon glyphicon-eye-open"></span>&nbsp;在线预览</a></td></tr>');
+                    });
+                    $('#paperListTable').dataTable({
+                        oLanguage: {
+                            sUrl: "/Content/DataTables-1.10.4/cn.txt"
+                        }
+                    });
+                }
+            });
+        }
+        function Refresh() {
+            window.location.href = '/EO/Navigation?Title=' + $('#Title').val() + '&Grade=' + $('#Grade').val() + '&Subject=' + $('#Subject').val() + '&Year=' + $('#Year').val() + '&Kind=' + $('#Kind').val() + '&Province=' + $('#Province').val();
+        }
+    </script>
+}
+<input type="hidden" id="Grade" value="@ViewBag.Grade"/>
+<input type="hidden" id="Year" value="@ViewBag.Year" />
+<input type="hidden" id="Kind" value="@ViewBag.Kind" />
+<input type="hidden" id="Province" value="@ViewBag.Province" />
+<input type="hidden" id="Subject" value="@ViewBag.Subject"/>
+<div style="position: relative; left: 3.5%; margin-top: 1.5%;" class="col-md-10 col-md-offset-1">
+    <div class="row">
+        <div id="filterBox" class="col-md-10">
+            <div id="gradeBox">
+                <ul class="nav nav-pills primary">
+                    <li role="presentation">
+                        <label style="line-height: 40px;">适用年级:</label></li>
+                    <li role="presentation"><a><span>全部</span></a></li>
+                    <li role="presentation"><a><span>一年级</span></a></li>
+                    <li role="presentation"><a><span>二年级</span></a></li>
+                    <li role="presentation"><a><span>三年级</span></a></li>
+                    <li role="presentation"><a><span>四年级</span></a></li>
+                    <li role="presentation"><a><span>五年级</span></a></li>
+                    <li role="presentation"><a><span>六年级</span></a></li>
+                </ul>
+                <ul class="nav nav-pills junior">
+                    <li role="presentation">
+                        <label style="line-height: 40px;">适用年级:</label></li>
+                    <li role="presentation"><a><span>全部</span></a></li>
+                    <li role="presentation"><a><span>七年级</span></a></li>
+                    <li role="presentation"><a><span>八年级</span></a></li>
+                    <li role="presentation"><a><span>九年级</span></a></li>
+                </ul>
+                <ul class="nav nav-pills high">
+                    <li role="presentation">
+                        <label style="line-height: 40px;">适用年级:</label></li>
+                    <li role="presentation"><a><span>全部</span></a></li>
+                    <li role="presentation"><a><span>十年级</span></a></li>
+                    <li role="presentation"><a><span>十一年级</span></a></li>
+                    <li role="presentation"><a><span>十二年级</span></a></li>
+                </ul>
+            </div>
+            <div id="yearBox">
+                <ul class="nav nav-pills">
+                    <li role="presentation">
+                        <label style="line-height: 40px;">试卷年份:</label></li>
+                    <li role="presentation"><a><span>全部</span></a></li>
+                    <li role="presentation"><a><span>@Convert.ToInt32(ViewBag.Years - 4)</span></a></li>
+                    <li role="presentation"><a><span>@Convert.ToInt32(ViewBag.Years - 3)</span></a></li>
+                    <li role="presentation"><a><span>@Convert.ToInt32(ViewBag.Years - 2)</span></a></li>
+                    <li role="presentation"><a><span>@Convert.ToInt32(ViewBag.Years - 1)</span></a></li>
+                    <li role="presentation"><a><span>@ViewBag.Years</span></a></li>
+                </ul>
+            </div>
+            <div id="kindBox">
+                <ul class="nav nav-pills">
+                    <li role="presentation">
+                        <label style="line-height: 40px;">试卷类型:</label></li>
+                    <li role="presentation"><a><span>全部</span></a></li>
+                    <li role="presentation"><a><span>同步试卷</span></a></li>
+                    <li role="presentation"><a><span>单元试卷</span></a></li>
+                    <li role="presentation"><a><span>专题试卷</span></a></li>
+                    <li role="presentation"><a><span>月考试卷</span></a></li>
+                    <li role="presentation"><a><span>期中试卷</span></a></li>
+                    <li role="presentation"><a><span>期末试卷</span></a></li>
+                    <li role="presentation" class="primary"><a><span>升中试卷</span></a></li>
+                    <li role="presentation"><a class="junior"><span>中考试卷</span></a></li>
+                    <li role="presentation" class="high"><a><span>高考试卷</span></a></li>
+                    <li role="presentation"><a><span>竞赛试卷</span></a></li>
+                </ul>
+            </div>
+            <div id="provinceBox">
+                <ul class="nav nav-pills">
+                    <li role="presentation">
+                        <label style="line-height: 30px; position: relative; top: 3px;">试卷省份:</label></li>
+                    <li role="presentation"><a><span>全部</span></a></li>
+                    <li role="presentation"><a><span>北京</span></a></li>
+                    <li role="presentation"><a><span>上海</span></a></li>
+                    <li role="presentation"><a><span>天津</span></a></li>
+                    <li role="presentation"><a><span>重庆</span></a></li>
+                    <li role="presentation"><a><span>江苏</span></a></li>
+                    <li role="presentation"><a><span>广东</span></a></li>
+                    <li role="presentation"><a><span>浙江</span></a></li>
+                    <li role="presentation"><a><span>山东</span></a></li>
+                    <li role="presentation"><a><span>湖北</span></a></li>
+                    <li role="presentation"><a><span>吉林</span></a></li>
+                    <li role="presentation"><a><span>河北</span></a></li>
+                    <li role="presentation"><a><span>福建</span></a></li>
+                    <li role="presentation"><a><span>安徽</span></a></li>
+                    <li role="presentation"><a><span>四川</span></a></li>
+                    <li role="presentation"><a><span>湖南</span></a></li>
+                    <li role="presentation"><a><span>江西</span></a></li>
+                    <li role="presentation"><a><span>辽宁</span></a></li>
+                    <li role="presentation"><a><span>黑龙江</span></a></li>
+                    <li role="presentation"><a><span>山西</span></a></li>
+                    <li role="presentation"><a><span>河南</span></a></li>
+                    <li role="presentation"><a><span>陕西</span></a></li>
+                    <li role="presentation"><a><span>云南</span></a></li>
+                    <li role="presentation"><a><span>甘肃</span></a></li>
+                    <li role="presentation"><a><span>贵州</span></a></li>
+                    <li role="presentation"><a><span>广西</span></a></li>
+                    <li role="presentation"><a><span>海南</span></a></li>
+                    <li role="presentation"><a><span>青海</span></a></li>
+                    <li role="presentation"><a><span>内蒙古</span></a></li>
+                    <li role="presentation"><a><span>西藏</span></a></li>
+                    <li role="presentation"><a><span>宁夏</span></a></li>
+                    <li role="presentation"><a><span>新疆</span></a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-10 fenge" style="border: solid #d8d8d8 thin; margin-top: 5px; margin-bottom: 5px;"></div>
+    </div>
+    <div class="row">
+        <div id="subjectBox" class="col-md-2" style="border: solid #d8d8d8 thin;">
+            <ul>
+                <li>
+                    <h5><b>当前位置:语文试卷</b></h5>
+                </li>
+                <li><a><span>语文</span>试卷<span style="font-size: large;" class="Num"></span></a></li>
+                <li><a><span>数学</span>试卷<span style="font-size: large;" class="Num"></span></a></li>
+                <li><a><span>英语</span>试卷<span style="font-size: large;" class="Num"></span></a></li>
+                <li class="no_primary_subject"><a><span>物理</span>试卷<span style="font-size: large;" class="Num"></span></a></li>
+                <li class="no_primary_subject"><a><span>化学</span>试卷<span style="font-size: large;" class="Num"></span></a></li>
+                <li class="no_primary_subject"><a><span>历史</span>试卷<span style="font-size: large;" class="Num"></span></a></li>
+                <li class="no_primary_subject"><a><span>政治思品</span>试卷<span style="font-size: large;" class="Num"></span></a></li>
+                <li class="no_primary_subject"><a><span>地理</span>试卷<span style="font-size: large;" class="Num"></span></a></li>
+                <li class="no_primary_subject"><a><span>生物</span>试卷<span style="font-size: large;" class="Num"></span></a></li>
+            </ul>
+        </div>
+        <div id="paperList" class="col-md-9">
+            <ul>
+                <li style="border-bottom: solid #d8d8d8 thin; height: 30px;">
+                    <h5><b>试卷列表</b></h5>
+                </li>
+            </ul>
+            <div>
+                <table id="paperListTable">
+                    <thead>
+                        <tr>
+                            <td></td>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                    <tfoot>
+                        <tr>
+                            <td></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section script{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            switch ($('#Title').val()) {
+                case '小学试卷': $('.junior,.high').hide();
+                    $('.no_primary_subject').hide();
+                    $('#gradeBox ul.primary li a span').each(function () { if ($(this).html() == $('#Grade').val()) { $(this).addClass('label').addClass('label-success'); return; } })
+                    break;
+                case '初中试卷': $('.primary,.high').hide();
+                    $('#gradeBox ul.junior li a span').each(function () { if ($(this).html() == $('#Grade').val()) { $(this).addClass('label').addClass('label-success'); return; } });
+                    break;
+                case '高中试卷': $('.primary,.junior').hide();
+                    $('#gradeBox ul.high li a span').each(function () { if ($(this).html() == $('#Grade').val()) { $(this).addClass('label').addClass('label-success'); return; } });
+                    break;
+            }
+            $('#yearBox ul li span').each(function () { if ($(this).html() == $('#Year').val()) $(this).addClass('label').addClass('label-success'); });
+            $('#kindBox ul li span').each(function () { if ($(this).html() == $('#Kind').val()) $(this).addClass('label').addClass('label-success') });
+            $('#provinceBox ul li span').each(function () { if ($(this).html() == $('#Province').val()) $(this).addClass('label').addClass('label-success') });
+            $('#subjectBox ul li:eq(0) h5 b').html('当前位置:' + $('#Subject').val() + '试卷');
+            LoadPaper();
+        });
+        $('#gradeBox ul li a').click(function () {
+            $('#gradeBox ul li span').removeClass('label').removeClass('label-success');
+            $(this).children().addClass('label').addClass('label-success');
+            $('#Grade').val($(this).children().html());
+            Refresh();
+        });
+        $('#yearBox ul li a').click(function () {
+            $('#yearBox ul li span').removeClass('label').removeClass('label-success');
+            $(this).children().addClass('label').addClass('label-success');
+            $('#Year').val($(this).children().html());
+            Refresh();
+        });
+        $('#kindBox ul li a').click(function () {
+            $('#kindBox ul li span').removeClass('label').removeClass('label-success');
+            $(this).children().addClass('label').addClass('label-success');
+            $('#Kind').val($(this).children().html());
+            Refresh();
+        });
+        $('#provinceBox ul li a').click(function () {
+            $('#provinceBox ul li span').removeClass('label').removeClass('label-success');
+            $(this).children().addClass('label').addClass('label-success');
+            $('#Province').val($(this).children().html());
+            Refresh();
+        });
+        $('#subjectBox ul li a').click(function () {
+            $('#Subject').val($(this).children('span').eq(0).html());
+            $('#subjectBox ul li:eq(0) h5 b').html('当前位置:' + $('#Subject').val() + '试卷');
+            Refresh();
+        });
+    </script>
+}
